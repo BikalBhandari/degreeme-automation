@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Test output
+playwright-report/
+test-results/
+
+# Environment files (contain URLs, could contain secrets)
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db

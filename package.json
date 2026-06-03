@@ -1,0 +1,18 @@
+{
+  "name": "degreeme-automation",
+  "version": "1.0.0",
+  "description": "Spec-driven test automation suite for DegreeMe",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test src/ui-testing/",
+    "test:api": "npx playwright test src/api-testing/",
+    "test:automation": "npx playwright test src/automation/",
+    "test:nonprod": "ENV=nonprod npx playwright test",
+    "test:prod": "ENV=prod npx playwright test",
+    "report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.52.0",
+    "dotenv": "16.4.7"
+  }
+}

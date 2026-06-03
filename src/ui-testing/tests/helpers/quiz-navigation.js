@@ -1,0 +1,53 @@
+/**
+ * Shared navigation helpers for quiz test suite.
+ * Each function navigates to a specific quiz screen and waits for it to render.
+ */
+
+async function startQuiz(page) {
+  await page.goto('/');
+  await page.locator('button:has-text("Take the quiz")').click();
+  // Wait for degree type screen to appear
+  await page.getByRole('heading', { name: 'What are you interested in pursuing?' }).waitFor({ state: 'visible', timeout: 10000 });
+}
+
+async function navigateToDegreeType(page) {
+  await startQuiz(page);
+}
+
+async function navigateToEducationStatus(page, degreeType = 'Undergraduate degree') {
+  await startQuiz(page);
+  await page.getByText(degreeType).click();
+  await page.getByRole('button', { name: /Continue/ }).click();
+  // Wait for education status screen
+  await page.getByText('Education status').waitFor({ state: 'visible', timeout: 10000 });
+}
+
+async function navigateToInterestAreas(page, { degreeType = 'Undergraduate degree', skipEducation = true } = {}) {
+  await navigateToEducationStatus(page, degreeType);
+  if (skipEducation) {
+    await page.getByRole('button', { name: 'Skip to next question' }).first().click();
+  } else {
+    await page.getByRole('button', { name: /Continue/ }).click();
+  }
+  // Wait for interest areas screen
+  await page.getByText('Interest areas').waitFor({ state: 'visible', timeout: 10000 });
+}
+
+async function navigateToInterestDrilldown(page, fields = ['Business'], options = {}) {
+  await navigateToInterestAreas(page, options);
+  for (const field of fields) {
+    await page.locator(`p.m-0:text-is("${field}")`).click();
+    await page.waitForTimeout(300);
+  }
+  await page.getByRole('button', { name: /Continue/ }).click();
+  // Wait for drilldown heading to appear
+  await page.locator('text=/What area of/').first().waitFor({ state: 'visible', timeout: 10000 });
+}
+
+module.exports = {
+  startQuiz,
+  navigateToDegreeType,
+  navigateToEducationStatus,
+  navigateToInterestAreas,
+  navigateToInterestDrilldown,
+};
