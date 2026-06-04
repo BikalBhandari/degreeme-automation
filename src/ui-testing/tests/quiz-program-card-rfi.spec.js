@@ -68,11 +68,12 @@ async function submitPageLevelRfi(page, index) {
   await page.locator('#asuonline_phone_number_id').fill(rfi.phone);
   await page.locator(rfi.military === 'Yes' ? '#military-true' : '#military-false').click();
 
+  // Wait for BritVerify async validation to complete
   const submitBtn = page.getByRole('button', { name: /submit/i });
-  await expect(submitBtn).toBeEnabled();
+  await expect(submitBtn).toBeEnabled({ timeout: 15000 });
   await submitBtn.click();
 
-  await page.locator('text=/be in touch/i').first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+  await page.locator('text=/be in touch/i').first().waitFor({ state: 'visible', timeout: 60000 });
   await page.locator('[aria-label="Close modal"]').click();
   await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
 }
@@ -98,11 +99,11 @@ async function submitProgramCardRfi(page, cardIndex) {
   await page.locator(rfi.military === 'Yes' ? '#military-true' : '#military-false').click();
 
   const submitBtn = page.getByRole('button', { name: /submit/i });
-  await expect(submitBtn).toBeEnabled();
+  await expect(submitBtn).toBeEnabled({ timeout: 15000 });
   await submitBtn.click();
 
   // Confirmation
-  await page.locator('text=/be in touch/i').first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+  await page.locator('text=/be in touch/i').first().waitFor({ state: 'visible', timeout: 60000 });
 
   // Close with the resize/collapse button (↗ icon at top-right of modal)
   const closeBtn = page.locator('button:has(svg), [class*="close"], [class*="collapse"]').filter({ has: page.locator('svg') }).first();
