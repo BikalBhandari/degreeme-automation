@@ -27,6 +27,22 @@ npx playwright test --project=chromium  # Single browser
 npm run report                  # Open HTML report
 ```
 
+## Full Flow Tests (No Skips)
+
+The `quiz-full-flow.spec.js` test runs the complete user journey with real selections at every step — no skips. It tests one path per degree type:
+
+```bash
+# Run all 3 full-flow tests (undergrad, graduate, certificate)
+npx playwright test quiz-full-flow --project=chromium
+
+# Run just one degree type
+npx playwright test quiz-full-flow --project=chromium -g "Undergraduate"
+npx playwright test quiz-full-flow --project=chromium -g "Graduate degree"
+npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate"
+```
+
+Each test takes ~60-90s due to AI result generation. The full path config (interest, sub-interests, environments, preferences) is defined in `FULL_PATHS` within `src/ui-testing/tests/data/quiz-paths.js`.
+
 ## Running a Specific Quiz Path
 
 To test a specific degree type + interest + sub-interest combination, edit the config file:

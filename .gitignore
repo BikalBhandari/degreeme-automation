@@ -5,6 +5,11 @@ node_modules/
 playwright-report/
 test-results/
 
+# Generated reports
+quiz-report.html
+quiz-full-flow-report.html
+test-cases.csv
+
 # Environment files (contain URLs, could contain secrets)
 .env
 .env.*

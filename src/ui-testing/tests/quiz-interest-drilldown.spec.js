@@ -1,6 +1,6 @@
 // Spec: src/ui-testing/specs/quiz-interest-drilldown.md
 const { test, expect } = require('@playwright/test');
-const { navigateToInterestDrilldown } = require('./helpers/quiz-navigation');
+const { navigateToInterestDrilldown, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 
 test.describe('Quiz - Interest Drilldown (Business)', () => {
   test.beforeEach(async ({ page }) => {
@@ -39,14 +39,12 @@ test.describe('Quiz - Interest Drilldown (Business)', () => {
   test('advances to Environments after completing drilldown', async ({ page }) => {
     await page.getByText('General business').click();
     await page.getByRole('button', { name: /Continue/ }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByText('Environments')).toBeVisible();
+    await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 
   test('back returns to interest areas', async ({ page }) => {
-    await page.getByRole('link', { name: 'Back' }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByRole('heading', { name: /What fields excite you the most/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('heading', { name: /What fields excite you the most/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });
 
@@ -62,19 +60,17 @@ test.describe('Quiz - Interest Drilldown (multiple fields)', () => {
   test('completing first drilldown advances to second', async ({ page }) => {
     await page.getByText('General business').click();
     await page.getByRole('button', { name: /Continue/ }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByRole('heading', { name: /What area of.*Technology/ })).toBeVisible();
+    await page.getByRole('heading', { name: /What area of.*Technology/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 
   test('completing all drilldowns advances to Environments', async ({ page }) => {
     // Complete Business
     await page.getByText('General business').click();
     await page.getByRole('button', { name: /Continue/ }).click();
-    await page.waitForTimeout(1000);
+    await page.getByRole('heading', { name: /What area of.*Technology/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
     // Complete Technology
     await page.getByText('General technology').click();
     await page.getByRole('button', { name: /Continue/ }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByText('Environments')).toBeVisible();
+    await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

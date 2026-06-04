@@ -1,6 +1,6 @@
 // Spec: src/ui-testing/specs/quiz-interest-areas.md
 const { test, expect } = require('@playwright/test');
-const { navigateToInterestAreas } = require('./helpers/quiz-navigation');
+const { navigateToInterestAreas, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 
 test.describe('Quiz - Interest Areas', () => {
   test.beforeEach(async ({ page }) => {
@@ -49,13 +49,11 @@ test.describe('Quiz - Interest Areas', () => {
   test('continue advances to drilldown for selected field', async ({ page }) => {
     await page.getByRole('paragraph').filter({ hasText: 'Business' }).click();
     await page.getByRole('button', { name: /Continue/ }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByRole('heading', { name: /What area of.*Business/ })).toBeVisible();
+    await page.getByRole('heading', { name: /What area of.*Business/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 
   test('back returns to education status', async ({ page }) => {
-    await page.getByRole('link', { name: 'Back' }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByRole('heading', { name: /Do you currently have any of the following/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('heading', { name: /Do you currently have any of the following/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });
