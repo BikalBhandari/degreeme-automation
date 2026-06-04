@@ -35,6 +35,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .toolbar{display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) var(--space-xl);background:var(--white);border-bottom:1px solid var(--gray-200);box-shadow:var(--shadow)}
 .toolbar h2{font-size:1rem;font-weight:600;color:var(--maroon)}
+.toolbar-desc{font-size:0.8rem;color:var(--gray-600);margin-top:0.15rem}
 .toolbar .run-all-btn{margin-left:auto;background:var(--maroon);color:var(--white);border:none;padding:var(--space-sm) var(--space-md);border-radius:var(--radius);cursor:pointer;font-size:0.8rem;font-weight:600;transition:opacity 0.2s;box-shadow:var(--shadow)}
 .toolbar .run-all-btn:hover{opacity:0.85}
 .toolbar .run-all-btn:disabled{opacity:0.5;cursor:not-allowed}
@@ -90,7 +91,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </nav>
 <div class="main">
 <div class="toolbar">
+<div>
 <h2 id="toolbar-title">Select a group</h2>
+<p id="toolbar-desc" class="toolbar-desc">Choose a test group from the left panel to view and run tests</p>
+</div>
 <button class="run-all-btn" id="run-all-btn" style="display:none" onclick="runCurrentGroup()">Run All</button>
 </div>
 <div class="grid-container">
@@ -144,6 +148,7 @@ function selectGroup(groupId) {
 
   const group = groupsData.find(g => g.id === groupId);
   document.getElementById('toolbar-title').textContent = group.name;
+  document.getElementById('toolbar-desc').textContent = group.description;
   document.getElementById('run-all-btn').style.display = 'inline-block';
   document.getElementById('run-all-btn').textContent = `Run All (${group.tests.length})`;
   renderGrid(group);
