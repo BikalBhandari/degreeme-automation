@@ -1,6 +1,6 @@
 // Spec: src/ui-testing/specs/quiz-education-status.md
 const { test, expect } = require('@playwright/test');
-const { navigateToEducationStatus } = require('./helpers/quiz-navigation');
+const { navigateToEducationStatus, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 
 test.describe('Quiz - Education Status', () => {
   test.beforeEach(async ({ page }) => {
@@ -42,13 +42,11 @@ test.describe('Quiz - Education Status', () => {
 
   test('skip advances to interest areas', async ({ page }) => {
     await page.getByRole('button', { name: 'Skip to next question' }).first().click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByText('Interest areas')).toBeVisible();
+    await page.getByText('Interest areas').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 
   test('back returns to degree type selection', async ({ page }) => {
-    await page.getByRole('link', { name: 'Back' }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByRole('heading', { name: 'What are you interested in pursuing?' })).toBeVisible();
+    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('heading', { name: 'What are you interested in pursuing?' }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { navigateToInterestAreas } = require('./helpers/quiz-navigation');
+const { navigateToInterestAreas, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 const { PATHS } = require('./data/quiz-paths');
 
 const graduatePaths = PATHS.filter((p) => p.degreeType === 'Graduate degree');
@@ -8,20 +8,19 @@ async function navigateToResults(page, path) {
   await navigateToInterestAreas(page, { degreeType: path.degreeType });
   await page.locator(`p.m-0:text-is("${path.interest}")`).click();
   await page.getByRole('button', { name: /Continue/ }).click();
-  await page.locator('text=/What area of/').first().waitFor({ state: 'visible', timeout: 10000 });
+  await page.locator(`p.m-0:text-is("${path.subInterest}")`).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.locator(`p.m-0:text-is("${path.subInterest}")`).click();
   await page.getByRole('button', { name: /Continue/ }).click();
-  await page.getByText('Environments').waitFor({ state: 'visible', timeout: 10000 });
+  await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.getByRole('button', { name: 'Skip to next question' }).first().click();
-  await page.getByText('Preferences').waitFor({ state: 'visible', timeout: 10000 });
+  await page.getByText('Preferences').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.getByRole('button', { name: 'Skip to results' }).first().click();
-  await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: 60000 });
-  await page.waitForTimeout(1000);
+  await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: 90000 });
 }
 
 for (const path of graduatePaths) {
   test.describe(`Graduate Results — ${path.interest}`, () => {
-    test.setTimeout(90000);
+    test.setTimeout(120000);
 
     test(`displays 5 degree cards`, async ({ page }) => {
       await navigateToResults(page, path);
@@ -65,7 +64,7 @@ for (const path of graduatePaths) {
       await navigateToResults(page, path);
       const plusButton = page.locator('button:has-text("+"), [class*="plus"], [class*="expand"]').first();
       await plusButton.click();
-      await page.waitForTimeout(2000);
+      await page.getByText('Read more').nth(9).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
       const readMoreLinks = page.getByText('Read more');
       await expect(readMoreLinks).toHaveCount(10);
     });

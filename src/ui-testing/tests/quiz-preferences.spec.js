@@ -1,16 +1,16 @@
 // Spec: src/ui-testing/specs/quiz-preferences.md
 const { test, expect } = require('@playwright/test');
-const { navigateToInterestDrilldown } = require('./helpers/quiz-navigation');
+const { navigateToInterestDrilldown, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 
 // Helper to navigate to Preferences
 async function navigateToPreferences(page) {
   await navigateToInterestDrilldown(page, ['Technology']);
   await page.getByText('General technology').click();
   await page.getByRole('button', { name: /Continue/ }).click();
-  await page.waitForTimeout(1000);
+  await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   // Skip Environments
   await page.getByRole('button', { name: 'Skip to next question' }).first().click();
-  await page.waitForTimeout(1000);
+  await page.getByText('Preferences').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
 }
 
 test.describe('Quiz - Preferences', () => {
@@ -52,14 +52,11 @@ test.describe('Quiz - Preferences', () => {
 
   test('skip to results advances to results page', async ({ page }) => {
     await page.getByRole('button', { name: 'Skip to results' }).first().click();
-    await page.waitForTimeout(2000);
-    // Results page should no longer show Preferences heading
-    await expect(page.getByText('Preferences')).not.toBeVisible();
+    await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: 90000 });
   });
 
   test('back returns to environments', async ({ page }) => {
-    await page.getByRole('link', { name: 'Back' }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByText('Environments')).toBeVisible();
+    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

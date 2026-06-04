@@ -1,13 +1,13 @@
 // Spec: src/ui-testing/specs/quiz-environments.md
 const { test, expect } = require('@playwright/test');
-const { navigateToInterestDrilldown } = require('./helpers/quiz-navigation');
+const { navigateToInterestDrilldown, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 
 // Helper to get past drilldowns to Environments
 async function navigateToEnvironments(page) {
   await navigateToInterestDrilldown(page, ['Technology']);
   await page.getByText('General technology').click();
   await page.getByRole('button', { name: /Continue/ }).click();
-  await page.waitForTimeout(1000);
+  await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
 }
 
 test.describe('Quiz - Environments', () => {
@@ -44,13 +44,11 @@ test.describe('Quiz - Environments', () => {
 
   test('skip advances to preferences', async ({ page }) => {
     await page.getByRole('button', { name: 'Skip to next question' }).first().click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByText('Preferences')).toBeVisible();
+    await page.getByText('Preferences').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 
   test('back returns to last drilldown', async ({ page }) => {
-    await page.getByRole('link', { name: 'Back' }).click();
-    await page.waitForTimeout(1000);
-    await expect(page.getByRole('heading', { name: /What area of.*Technology/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('heading', { name: /What area of.*Technology/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

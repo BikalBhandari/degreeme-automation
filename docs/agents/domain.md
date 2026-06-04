@@ -24,18 +24,6 @@ Multi-context repo (presence of `CONTEXT-MAP.md` at the root):
     ├── api-testing/
     │   ├── CONTEXT.md
     │   └── docs/adr/
-    ├── database-testing/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/
-    ├── accessibility/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/
-    ├── storybook/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/
-    ├── salesforce/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/
     └── automation/
         ├── CONTEXT.md
         └── docs/adr/

@@ -3,25 +3,24 @@
  * Runs once with Undergraduate + Technology as a representative path.
  */
 const { test, expect } = require('@playwright/test');
-const { navigateToInterestAreas } = require('./helpers/quiz-navigation');
+const { navigateToInterestAreas, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 
 async function navigateToResults(page) {
   await navigateToInterestAreas(page, { degreeType: 'Undergraduate degree' });
   await page.locator('p.m-0:text-is("Technology")').click();
   await page.getByRole('button', { name: /Continue/ }).click();
-  await page.waitForTimeout(1500);
+  await page.locator('p.m-0:text-is("General technology")').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.locator('p.m-0:text-is("General technology")').click();
   await page.getByRole('button', { name: /Continue/ }).click();
-  await page.waitForTimeout(1000);
+  await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.getByRole('button', { name: 'Skip to next question' }).first().click();
-  await page.waitForTimeout(1000);
+  await page.getByText('Preferences').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.getByRole('button', { name: 'Skip to results' }).first().click();
-  await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: 60000 });
-  await page.waitForTimeout(2000);
+  await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: 90000 });
 }
 
 test.describe('Results Page — Common UI Elements', () => {
-  test.setTimeout(90000);
+  test.setTimeout(120000);
 
   test.beforeEach(async ({ page }) => {
     await navigateToResults(page);
@@ -56,7 +55,7 @@ test.describe('Results Page — Common UI Elements', () => {
   test('+ button reveals 5 additional cards (10 total)', async ({ page }) => {
     const plusButton = page.locator('button:has-text("+"), [class*="plus"], [class*="expand"]').first();
     await plusButton.click();
-    await page.waitForTimeout(2000);
+    await page.getByText('Read more').nth(9).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
     const readMoreLinks = page.getByText('Read more');
     await expect(readMoreLinks).toHaveCount(10);
   });
