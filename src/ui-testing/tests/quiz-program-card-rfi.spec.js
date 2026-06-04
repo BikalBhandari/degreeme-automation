@@ -72,7 +72,7 @@ async function submitPageLevelRfi(page, index) {
   await expect(submitBtn).toBeEnabled();
   await submitBtn.click();
 
-  await page.getByText("We'll be in touch").waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+  await page.locator('text=/be in touch/i').first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.locator('[aria-label="Close modal"]').click();
   await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
 }
