@@ -65,7 +65,7 @@ app.post('/api/run-test', (req, res) => {
   // Clear the JSON results file so report only shows this run
   if (parentGroup.reportJson) {
     const jsonPath = path.join(PROJECT_ROOT, parentGroup.reportJson);
-    fs.writeFileSync(jsonPath, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
+    fs.writeFileSync(jsonPath, JSON.stringify({ timestamp: new Date().toISOString(), env: currentEnv, results: [] }));
   }
 
   const start = Date.now();
@@ -87,7 +87,7 @@ app.post('/api/run-group', (req, res) => {
   // Clear the JSON results file so report only shows this run
   if (group.reportJson) {
     const jsonPath = path.join(PROJECT_ROOT, group.reportJson);
-    fs.writeFileSync(jsonPath, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
+    fs.writeFileSync(jsonPath, JSON.stringify({ timestamp: new Date().toISOString(), env: currentEnv, results: [] }));
   }
 
   const start = Date.now();
