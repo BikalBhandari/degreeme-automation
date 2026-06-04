@@ -147,5 +147,6 @@ Show:
 - The test takes ~30-60 seconds due to AI result generation time — warn the user.
 - For a human-readable HTML report, run `npm run report:full-flow` (reads from `full-flow-test-results.json` generated during the test run).
 - For the RFI submission report, run `npm run report:rfi` (reads from `rfi-test-results.json`).
+- For the AI results validation report, run `npm run report:results` (reads from `results-*-test-results.json`).
 - The `quiz-full-flow.spec.js` test covers all 27 paths (3 degree types × 9 interest areas) with no skips.
 - The `quiz-full-flow-withRFI.spec.js` test covers 3 paths with RFI submission.

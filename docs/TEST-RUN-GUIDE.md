@@ -100,7 +100,17 @@ npx playwright show-report
 # Custom stakeholder reports (instant, reads from JSON generated during test run)
 npm run report:full-flow        # → quiz-full-flow-report.html
 npm run report:rfi              # → quiz-rfi-report.html
+npm run report:results          # → quiz-results-report.html
 ```
+
+## Dashboard (Visual Test Launcher)
+
+```bash
+# Start the web dashboard on port 4400
+npm run dashboard
+```
+
+Opens a browser with all tests grouped by category. Click to run, view status, and access reports without using the terminal.
 
 ## Run Everything
 
