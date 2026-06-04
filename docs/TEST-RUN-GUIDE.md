@@ -79,6 +79,29 @@ npx playwright test quiz-results-certificate --project=chromium -g "Health"
 npx playwright test quiz-discovery --project=chromium
 ```
 
+## RFI Submission Tests
+
+```bash
+# All 3 RFI paths (one per degree type, ~2 min)
+npm run test:rfi
+
+# Single degree type
+npx playwright test quiz-full-flow-withRFI --project=chromium -g "Undergraduate"
+npx playwright test quiz-full-flow-withRFI --project=chromium -g "Graduate degree"
+npx playwright test quiz-full-flow-withRFI --project=chromium -g "Graduate certificate"
+```
+
+## Reports
+
+```bash
+# Playwright HTML report (debug: traces, screenshots, errors)
+npx playwright show-report
+
+# Custom stakeholder reports (instant, reads from JSON generated during test run)
+npm run report:full-flow        # → quiz-full-flow-report.html
+npm run report:rfi              # → quiz-rfi-report.html
+```
+
 ## Run Everything
 
 ```bash

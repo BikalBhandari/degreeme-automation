@@ -145,5 +145,7 @@ Show:
 - If the user provides a degree type but says "all interests", run the full results file for that degree type.
 - Always use `--project=chromium` for single test runs (fastest).
 - The test takes ~30-60 seconds due to AI result generation time — warn the user.
-- For a human-readable HTML report, use `node src/ui-testing/tests/helpers/generate-report.js "DegreeType" "EducationStatus" "InterestArea" "SubInterest"`.
+- For a human-readable HTML report, run `npm run report:full-flow` (reads from `full-flow-test-results.json` generated during the test run).
+- For the RFI submission report, run `npm run report:rfi` (reads from `rfi-test-results.json`).
 - The `quiz-full-flow.spec.js` test covers all 27 paths (3 degree types × 9 interest areas) with no skips.
+- The `quiz-full-flow-withRFI.spec.js` test covers 3 paths with RFI submission.

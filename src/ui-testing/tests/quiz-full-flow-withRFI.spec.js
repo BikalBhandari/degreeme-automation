@@ -1,7 +1,8 @@
-// Spec: src/ui-testing/specs/quiz-full-flow.md
+// Spec: src/ui-testing/specs/quiz-full-flow-withRFI.md
 const { test, expect } = require('@playwright/test');
 const { startQuiz, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 const { FULL_PATHS } = require('./data/quiz-paths');
+const { generateRfiData } = require('./data/rfi-data');
 const fs = require('fs');
 const nodePath = require('path');
 
@@ -10,8 +11,16 @@ const ANIMATION_MESSAGES = [
   'Searching degrees and certificates',
 ];
 
-const RESULTS_FILE = nodePath.join(__dirname, '..', '..', '..', 'full-flow-test-results.json');
+const RESULTS_FILE = nodePath.join(__dirname, '..', '..', '..', 'rfi-test-results.json');
 
+// One path per degree type (first entry of each)
+const RFI_PATHS = [
+  FULL_PATHS.find(p => p.degreeType === 'Undergraduate degree'),
+  FULL_PATHS.find(p => p.degreeType === 'Graduate degree'),
+  FULL_PATHS.find(p => p.degreeType === 'Graduate certificate'),
+];
+
+// Initialize results file at start
 test.beforeAll(() => {
   fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
 });
@@ -24,18 +33,21 @@ function appendResult(result) {
     existing.results.push(result);
     fs.writeFileSync(RESULTS_FILE, JSON.stringify(existing, null, 2));
   } catch (e) {
+    // Last resort: write just this result
     fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [result] }, null, 2));
   }
 }
 
-for (const quizPath of FULL_PATHS) {
-  test(`Full flow — ${quizPath.degreeType} — ${quizPath.interest}`, async ({ page }) => {
+for (let i = 0; i < RFI_PATHS.length; i++) {
+  const quizPath = RFI_PATHS[i];
+  test(`Full flow with RFI — ${quizPath.degreeType}`, async ({ page }, testInfo) => {
     test.setTimeout(210000);
     const steps = [];
     const start = Date.now();
-    let degreeCards = [];
+    const rfi = generateRfiData(i);
 
     try {
+      // === QUIZ FLOW ===
       await startQuiz(page);
       steps.push({ name: 'Start Quiz', status: 'pass' });
 
@@ -76,36 +88,38 @@ for (const quizPath of FULL_PATHS) {
 
       const animationLocator = page.getByText(new RegExp(ANIMATION_MESSAGES.join('|')));
       await animationLocator.first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
-      steps.push({ name: 'Animation', status: 'pass' });
-
       await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: 180000 });
       await expect(page.getByText('Read more')).toHaveCount(5);
-      steps.push({ name: 'Results', status: 'pass' });
+      steps.push({ name: 'Results Loaded', status: 'pass' });
 
-      const cards = page.locator('text=/Online .+/').filter({ hasNotText: 'ASU Online' });
-      degreeCards = (await cards.allInnerTexts()).slice(0, 5);
+      // === RFI SUBMISSION ===
+      await page.getByRole('button', { name: 'Request Info' }).first().click();
+      await page.getByText('Connect with us').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+      steps.push({ name: 'Modal Opened', status: 'pass' });
 
-      const graduateKeywords = ['master', 'doctor', 'ms ', 'ms\n', 'ma ', 'mba', 'med', 'juris', 'llm'];
-      const count = await cards.count();
-      for (let i = 0; i < count && i < 5; i++) {
-        const name = (await cards.nth(i).innerText()).toLowerCase();
-        if (quizPath.degreeLevelKeyword === 'master') {
-          const isGraduate = graduateKeywords.some(kw => name.includes(kw));
-          expect(isGraduate, `Expected graduate program, got: ${name}`).toBeTruthy();
-        } else {
-          expect(name).toContain(quizPath.degreeLevelKeyword);
-        }
-      }
+      await page.locator('#first-name').fill(rfi.firstName);
+      await page.locator('#last-name').fill(rfi.lastName);
+      await page.locator('#email').fill(rfi.email);
+      await page.locator('#asuonline_phone_number_id').fill(rfi.phone);
+      await page.locator(rfi.military === 'Yes' ? '#military-true' : '#military-false').click();
+      steps.push({ name: 'Form Filled', status: 'pass' });
 
-      await expect(page.getByText('Request Info')).toBeVisible();
-      await expect(page.getByText('Restart')).toBeVisible();
+      const submitBtn = page.getByRole('button', { name: /submit/i });
+      await expect(submitBtn).toBeEnabled();
+      await submitBtn.click();
+      steps.push({ name: 'Submitted', status: 'pass' });
+
+      await page.getByText("We'll be in touch").waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+      steps.push({ name: 'Confirmation', status: 'pass' });
+
+      await page.locator('[aria-label="Close modal"]').click();
+      steps.push({ name: 'Modal Closed', status: 'pass' });
 
       appendResult({
         degreeType: quizPath.degreeType,
         interest: quizPath.interest,
-        degreeLevelKeyword: quizPath.degreeLevelKeyword,
+        rfi,
         steps,
-        degreeCards,
         pass: true,
         error: '',
         duration: ((Date.now() - start) / 1000).toFixed(1),
@@ -115,9 +129,8 @@ for (const quizPath of FULL_PATHS) {
       appendResult({
         degreeType: quizPath.degreeType,
         interest: quizPath.interest,
-        degreeLevelKeyword: quizPath.degreeLevelKeyword,
+        rfi,
         steps,
-        degreeCards,
         pass: false,
         error: e.message.split('\n')[0],
         duration: ((Date.now() - start) / 1000).toFixed(1),

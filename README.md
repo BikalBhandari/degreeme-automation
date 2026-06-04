@@ -29,10 +29,10 @@ npm run report                  # Open HTML report
 
 ## Full Flow Tests (No Skips)
 
-The `quiz-full-flow.spec.js` test runs the complete user journey with real selections at every step — no skips. It tests one path per degree type:
+The `quiz-full-flow.spec.js` test runs the complete user journey with real selections at every step — no skips. It tests one path per degree type × interest area (27 paths):
 
 ```bash
-# Run all 3 full-flow tests (undergrad, graduate, certificate)
+# Run all 27 full-flow tests
 npx playwright test quiz-full-flow --project=chromium
 
 # Run just one degree type
@@ -41,7 +41,43 @@ npx playwright test quiz-full-flow --project=chromium -g "Graduate degree"
 npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate"
 ```
 
-Each test takes ~60-90s due to AI result generation. The full path config (interest, sub-interests, environments, preferences) is defined in `FULL_PATHS` within `src/ui-testing/tests/data/quiz-paths.js`.
+Each test takes ~30-60s due to AI result generation. The full path config is defined in `FULL_PATHS` within `src/ui-testing/tests/data/quiz-paths.js`.
+
+## RFI Submission Tests
+
+The `quiz-full-flow-withRFI.spec.js` test runs the full quiz flow and then submits an UNDECIDED RFI through the page-level "Request Info" button. Tests 3 paths (one per degree type).
+
+```bash
+# Run all 3 RFI tests
+npm run test:rfi
+
+# Run one degree type
+npx playwright test quiz-full-flow-withRFI --project=chromium -g "Undergraduate"
+```
+
+Each test takes ~30-45s. Test data uses:
+- Names: `embtest` prefix (e.g., `embtestPriya`, `embtestNguyen`)
+- Email: `edplusqatest+degreemeautomation{timestamp}@gmail.com`
+- Phone: valid US 10-digit number (passes BritVerify)
+- Military: alternates Yes/No across paths
+
+## Reports
+
+Each test writes results to a JSON file during execution. Reports are generated instantly from the JSON — no second browser run needed.
+
+```bash
+# Playwright HTML report (debug: traces, screenshots, errors)
+npx playwright show-report
+
+# Custom human-readable reports (stakeholder-friendly)
+npm run report:full-flow        # From full-flow-test-results.json → quiz-full-flow-report.html
+npm run report:rfi              # From rfi-test-results.json → quiz-rfi-report.html
+```
+
+Workflow:
+1. Run tests: `npm run test:rfi` or `npx playwright test quiz-full-flow --project=chromium`
+2. Debug failures: `npx playwright show-report`
+3. Share with stakeholders: `npm run report:rfi` or `npm run report:full-flow`
 
 ## Running a Specific Quiz Path
 
@@ -107,12 +143,17 @@ src/
 │   ├── specs/                  ← Functional test specs (plain language)
 │   ├── tests/
 │   │   ├── data/
-│   │   │   └── quiz-paths.js  ← Test configuration (degree types, interests, keywords)
+│   │   │   ├── quiz-paths.js  ← Test configuration (degree types, interests, keywords)
+│   │   │   └── rfi-data.js    ← RFI test data generator (names, email, phone, military)
 │   │   ├── helpers/
-│   │   │   └── quiz-navigation.js  ← Shared navigation helpers
-│   │   ├── quiz-discovery.spec.js  ← Early warning if quiz options change
-│   │   ├── quiz-results-*.spec.js  ← Data-driven results validation
-│   │   └── quiz-*.spec.js          ← Per-screen flow tests
+│   │   │   ├── quiz-navigation.js       ← Shared navigation helpers
+│   │   │   ├── generate-full-flow-report.js  ← Stakeholder report (reads JSON)
+│   │   │   └── generate-rfi-report.js        ← RFI stakeholder report (reads JSON)
+│   │   ├── quiz-discovery.spec.js       ← Early warning if quiz options change
+│   │   ├── quiz-full-flow.spec.js       ← Full quiz flow (27 paths)
+│   │   ├── quiz-full-flow-withRFI.spec.js  ← Full flow + RFI submission (3 paths)
+│   │   ├── quiz-results-*.spec.js       ← Data-driven results validation
+│   │   └── quiz-*.spec.js              ← Per-screen flow tests
 ├── api-testing/
 │   ├── specs/
 │   └── tests/
