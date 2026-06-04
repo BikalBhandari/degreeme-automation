@@ -73,7 +73,9 @@ app.post('/api/run-test', (req, res) => {
   const command = testConfig.command + reporterFlag;
 
   const start = Date.now();
-  const child = exec(command, { cwd: PROJECT_ROOT, timeout: 300000, env: { ...process.env, ENV: currentEnv } }, (error, stdout, stderr) => {
+  const envVars = { ...process.env, ENV: currentEnv };
+  if (parentGroup.playwrightReportDir) envVars.PLAYWRIGHT_HTML_REPORT = `./${parentGroup.playwrightReportDir}`;
+  const child = exec(command, { cwd: PROJECT_ROOT, timeout: 300000, env: envVars }, (error, stdout, stderr) => {
     delete runningProcesses[testId];
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     const pass = !error;
@@ -99,7 +101,9 @@ app.post('/api/run-group', (req, res) => {
   const command = group.runAllCommand + reporterFlag;
 
   const start = Date.now();
-  const child = exec(command, { cwd: PROJECT_ROOT, timeout: 600000, env: { ...process.env, ENV: currentEnv } }, (error, stdout, stderr) => {
+  const envVars = { ...process.env, ENV: currentEnv };
+  if (group.playwrightReportDir) envVars.PLAYWRIGHT_HTML_REPORT = `./${group.playwrightReportDir}`;
+  const child = exec(command, { cwd: PROJECT_ROOT, timeout: 600000, env: envVars }, (error, stdout, stderr) => {
     delete runningProcesses[`group-${groupId}`];
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     const pass = !error;
