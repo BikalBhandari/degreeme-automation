@@ -122,6 +122,20 @@ const groups = [
     runAllCommand: 'npx playwright test quiz-negative-scenarios --project=chromium',
   },
   {
+    id: 'accessibility',
+    name: 'Accessibility',
+    description: 'WCAG compliance: keyboard nav, ARIA labels, contrast, focus indicators. ~60s total',
+    tests: [
+      { id: 'a11y-focus-trap', name: 'Keyboard Focus Trap in RFI Modal', command: 'npx playwright test quiz-accessibility --project=chromium -g "Focus Trap"' },
+      { id: 'a11y-aria-labels', name: 'Screen Reader Labeling (Aria-labels)', command: 'npx playwright test quiz-accessibility --project=chromium -g "Aria-labels"' },
+      { id: 'a11y-contrast', name: 'Color Contrast Ratio', command: 'npx playwright test quiz-accessibility --project=chromium -g "Contrast"' },
+      { id: 'a11y-focus-ring', name: 'Visual Focus Indicators', command: 'npx playwright test quiz-accessibility --project=chromium -g "Focus Indicators"' },
+      { id: 'a11y-esc-close', name: 'Modal Closure via Esc Key', command: 'npx playwright test quiz-accessibility --project=chromium -g "Esc Key"' },
+      { id: 'a11y-alt-text', name: 'Alt Text for Form Icons', command: 'npx playwright test quiz-accessibility --project=chromium -g "Alt Text"' },
+    ],
+    runAllCommand: 'npx playwright test quiz-accessibility --project=chromium',
+  },
+  {
     id: 'cross-browser',
     name: 'Cross-Browser',
     description: 'Representative paths on Chromium, Firefox, and WebKit. ~4 min total | ~40s per browser',
