@@ -26,3 +26,4 @@ results-certificate-test-results.json
 # OS files
 .DS_Store
 Thumbs.db
+tmp-attachments/
