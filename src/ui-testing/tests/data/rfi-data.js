@@ -4,16 +4,71 @@
  */
 
 const FIRST_NAMES = [
-  'Aiden', 'Priya', 'Carlos', 'Fatima', 'Kenji', 'Amara', 'Liam', 'Mei',
-  'Omar', 'Sofia', 'Raj', 'Yuki', 'Diego', 'Nia', 'Tariq', 'Elena',
-  'Kofi', 'Ines', 'Mateo', 'Sana', 'Andre', 'Hana', 'Jamal', 'Lucia',
-  'Vikram', 'Aaliyah', 'Chen', 'Rosa', 'Kwame', 'Noor',
+  'Aiden', 'Liam', 'Noah', 'Ethan', 'Lucas', 'Mason', 'Elijah', 'Benjamin',
+  'Oliver', 'James', 'Sophia', 'Emma', 'Olivia', 'Ava', 'Isabella', 'Mia',
+  'Charlotte', 'Amelia', 'Harper', 'Evelyn',
+
+  'Priya', 'Raj', 'Vikram', 'Arjun', 'Rohan', 'Anika', 'Neha', 'Asha',
+  'Sana', 'Aaliyah', 'Zara', 'Imran', 'Omar', 'Tariq', 'Noor', 'Fatima',
+  'Layla', 'Yasmin', 'Hassan', 'Amir',
+
+  'Carlos', 'Diego', 'Mateo', 'Santiago', 'Javier', 'Andres', 'Miguel',
+  'Sofia', 'Lucia', 'Elena', 'Valentina', 'Camila', 'Isabella', 'Rosa',
+  'Gabriela', 'Mariana', 'Fernanda', 'Alejandro', 'Ricardo', 'Juan',
+
+  'Kenji', 'Yuki', 'Hana', 'Haruto', 'Ren', 'Sora', 'Takumi', 'Kaito',
+  'Aiko', 'Mei', 'Chen', 'Wei', 'Jing', 'Li', 'Xiao', 'Jun',
+  'Min', 'Jisoo', 'Hyun', 'Seo-yeon',
+
+  'Kwame', 'Kofi', 'Nia', 'Amara', 'Amina', 'Ade', 'Tunde', 'Chidi',
+  'Ngozi', 'Zola', 'Jabari', 'Ayana', 'Thabo', 'Lerato', 'Sipho', 'Naledi',
+  'Mensah', 'Ayo', 'Binta', 'Makena',
+
+  'Andre', 'Jean', 'Pierre', 'Louis', 'Antoine', 'Julien', 'Claire',
+  'Sophie', 'Camille', 'Chloe', 'Luca', 'Marco', 'Giulia', 'Alessia',
+  'Matteo', 'Francesca', 'Enzo', 'Tommaso', 'Chiara', 'Paolo',
+
+  'Lars', 'Erik', 'Sven', 'Maja', 'Freja', 'Astrid', 'Ingrid', 'Nils',
+  'Johanna', 'Henrik', 'Marta', 'Katarzyna', 'Piotr', 'Tomasz', 'Anna',
+  'Jakub', 'Petra', 'Marek', 'Eva', 'Jan',
+
+  'Michael', 'David', 'Daniel', 'Christopher', 'Matthew', 'Nathan',
+  'Jonathan', 'Sarah', 'Rachel', 'Rebecca', 'Lauren', 'Emily',
+  'Jordan', 'Taylor', 'Morgan', 'Alex', 'Casey', 'Jamie', 'Logan', 'Avery'
 ];
+
 const LAST_NAMES = [
-  'Patel', 'Nguyen', 'Kim', 'Garcia', 'Okafor', 'Tanaka', 'Singh', 'Hernandez',
-  'Muller', 'Chen', 'Osei', 'Rivera', 'Nakamura', 'Ali', 'Johansson', 'Santos',
-  'Begum', 'Park', 'Fernandez', 'Mensah', 'Yamamoto', 'Reyes', 'Ibrahim', 'Novak',
-  'Gupta', 'Martinez', 'Cho', 'Adeyemi', 'Larsson', 'Hassan',
+  'Patel', 'Singh', 'Gupta', 'Sharma', 'Verma', 'Reddy', 'Mehta', 'Kapoor',
+  'Nguyen', 'Tran', 'Le', 'Pham', 'Vo', 'Huynh',
+  'Kim', 'Park', 'Lee', 'Cho', 'Choi', 'Jung',
+  'Tanaka', 'Yamamoto', 'Nakamura', 'Sato', 'Suzuki', 'Kobayashi',
+  'Chen', 'Wang', 'Li', 'Zhang', 'Liu', 'Yang', 'Huang', 'Wu',
+
+  'Garcia', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Perez',
+  'Rodriguez', 'Rivera', 'Fernandez', 'Torres', 'Morales', 'Castillo',
+  'Santos', 'Reyes', 'Cruz', 'Vargas',
+
+  'Ali', 'Hassan', 'Ibrahim', 'Rahman', 'Khan', 'Ahmed', 'Mahmoud',
+  'Abdullah', 'Farooq', 'Nasser',
+
+  'Okafor', 'Adeyemi', 'Mensah', 'Osei', 'Diallo', 'Bello',
+  'Ndlovu', 'Mbeki', 'Moyo', 'Kamau', 'Abebe', 'Tadesse',
+
+  'Muller', 'Schmidt', 'Weber', 'Fischer', 'Wagner',
+  'Novak', 'Horvat', 'Kovac', 'Popescu', 'Ionescu',
+  'Johansson', 'Larsson', 'Andersson', 'Lindberg', 'Eriksson',
+
+  'Rossi', 'Russo', 'Ferrari', 'Romano', 'Ricci',
+  'Dubois', 'Moreau', 'Laurent', 'Lefevre', 'Fontaine',
+  'Silva', 'Costa', 'Pereira', 'Oliveira', 'Sousa',
+
+  'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller',
+  'Davis', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas',
+  'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Clark',
+
+  'Begum', 'Chowdhury', 'Islam', 'Hossain', 'Das',
+  'Perera', 'Jayasinghe', 'Fernando',
+  'Petrov', 'Ivanov', 'Sokolov', 'Kuznetsov'
 ];
 
 // Valid US area codes (avoids reserved/fictional ranges)
