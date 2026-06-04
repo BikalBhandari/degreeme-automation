@@ -145,6 +145,13 @@ async function loadTests() {
 }
 
 async function switchEnv(env) {
+  if (env === 'prod') {
+    const confirmed = confirm('⚠️ You are switching to PRODUCTION.\n\nTests will run against the live site and may submit real data.\n\nContinue?');
+    if (!confirmed) {
+      document.getElementById('env-select').value = 'nonprod';
+      return;
+    }
+  }
   await fetch('/api/env', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
