@@ -62,7 +62,7 @@ details summary:hover{background:#f0f0f0}
 </style></head><body><div class="container">
 <div class="header">
 <h1>🎓 DegreeMe Full Flow Test Report</h1>
-<div class="meta"><span>${new Date(data.timestamp).toLocaleString()}</span><span>Environment: nonprod</span><span>Browser: Chromium</span></div>
+<div class="meta"><span>${new Date(data.timestamp).toLocaleString()}</span><span>Environment: ${data.env || 'nonprod'}</span><span>Browser: Chromium</span></div>
 <div class="stats">
 <div class="stat"><div class="stat-val">${results.length}</div><div class="stat-lbl">Total</div></div>
 <div class="stat"><div class="stat-val" style="color:#86efac">${passed}</div><div class="stat-lbl">Passed</div></div>

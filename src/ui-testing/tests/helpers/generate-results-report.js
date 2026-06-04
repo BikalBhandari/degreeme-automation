@@ -18,10 +18,12 @@ const sources = [
 ];
 
 let allResults = [];
+let reportEnv = 'nonprod';
 for (const src of sources) {
   const filePath = path.join(ROOT, src.file);
   if (fs.existsSync(filePath)) {
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    if (data.env) reportEnv = data.env;
     allResults.push(...data.results.map(r => ({ ...r, category: src.label })));
   }
 }
@@ -70,7 +72,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </style></head><body><div class="container">
 <div class="header">
 <h1>🎯 DegreeMe Results Validation Report</h1>
-<div class="meta"><span>${new Date().toLocaleString()}</span><span>Environment: nonprod</span><span>AI Relevance Check</span></div>
+<div class="meta"><span>${new Date().toLocaleString()}</span><span>Environment: ${reportEnv}</span><span>AI Relevance Check</span></div>
 <div class="stats">
 <div class="stat"><div class="stat-val">${allResults.length}</div><div class="stat-lbl">Paths</div></div>
 <div class="stat"><div class="stat-val" style="color:#86efac">${passed}</div><div class="stat-lbl">Passed</div></div>
