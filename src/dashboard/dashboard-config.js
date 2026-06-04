@@ -12,7 +12,7 @@ function fullFlowTests(degreeType, idPrefix) {
   return INTEREST_AREAS.map(interest => ({
     id: `${idPrefix}-${interest.toLowerCase().replace(/[^a-z]/g, '').substring(0, 8)}`,
     name: `${degreeType} — ${interest}`,
-    command: `npx playwright test quiz-full-flow --project=chromium -g "Full flow — ${degreeType} — ${interest}"`,
+    command: `npx playwright test quiz-full-flow --project=chromium -g "Full flow .+ ${degreeType} .+ ${interest}"`,
   }));
 }
 
@@ -35,9 +35,9 @@ const groups = [
     name: 'RFI Submission',
     description: 'Full quiz flow + UNDECIDED RFI submission via Request Info button',
     tests: [
-      { id: 'rfi-undergrad', name: 'Undergraduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI — Undergraduate degree"' },
-      { id: 'rfi-grad', name: 'Graduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI — Graduate degree"' },
-      { id: 'rfi-cert', name: 'Certificate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI — Graduate certificate"' },
+      { id: 'rfi-undergrad', name: 'Undergraduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Undergraduate degree"' },
+      { id: 'rfi-grad', name: 'Graduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Graduate degree"' },
+      { id: 'rfi-cert', name: 'Certificate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Graduate certificate"' },
     ],
     runAllCommand: 'npx playwright test quiz-full-flow-withRFI --project=chromium',
     reportJson: 'rfi-test-results.json',
