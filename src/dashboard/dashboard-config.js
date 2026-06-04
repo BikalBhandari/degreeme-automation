@@ -21,7 +21,7 @@ const groups = [
   {
     id: 'discovery',
     name: 'Discovery (Sanity Check)',
-    description: 'Canary test — fails if quiz options change, signaling config needs updating',
+    description: 'Canary test — fails if quiz options change. ~30s total | ~5s per test',
     tests: [
       { id: 'discovery', name: 'Quiz Discovery', command: 'npx playwright test quiz-discovery --project=chromium' },
     ],
@@ -30,7 +30,7 @@ const groups = [
   {
     id: 'per-screen',
     name: 'Per-Screen Validation',
-    description: 'Individual screen validation tests for each quiz step',
+    description: 'Individual screen validation tests for each quiz step. ~2 min total | ~10s per test',
     tests: [
       { id: 'screen-homepage', name: 'Homepage', command: 'npx playwright test homepage --project=chromium' },
       { id: 'screen-degree-type', name: 'Degree Type Selection', command: 'npx playwright test quiz-degree-type-selection --project=chromium' },
@@ -45,7 +45,7 @@ const groups = [
   {
     id: 'results-undergrad',
     name: 'Results — Undergraduate',
-    description: 'Validates AI-generated Bachelor degree recommendations per interest area',
+    description: 'Validates AI-generated Bachelor degree recommendations. ~10 min total | ~60s per test',
     tests: [
       { id: 'results-undergrad-all', name: 'All undergraduate results', command: 'npx playwright test quiz-results-undergraduate --project=chromium' },
     ],
@@ -56,7 +56,7 @@ const groups = [
   {
     id: 'results-grad',
     name: 'Results — Graduate',
-    description: 'Validates AI-generated Master degree recommendations per interest area',
+    description: 'Validates AI-generated Master degree recommendations. ~10 min total | ~60s per test',
     tests: [
       { id: 'results-grad-all', name: 'All graduate results', command: 'npx playwright test quiz-results-graduate --project=chromium' },
     ],
@@ -67,7 +67,7 @@ const groups = [
   {
     id: 'results-cert',
     name: 'Results — Certificate',
-    description: 'Validates AI-generated certificate recommendations per interest area',
+    description: 'Validates AI-generated certificate recommendations. ~10 min total | ~60s per test',
     tests: [
       { id: 'results-cert-all', name: 'All certificate results', command: 'npx playwright test quiz-results-certificate --project=chromium' },
     ],
@@ -78,7 +78,7 @@ const groups = [
   {
     id: 'full-flow',
     name: 'Full Flow (Quiz Completion)',
-    description: 'Complete quiz journey with real selections at every step — no skips, validates results',
+    description: 'Complete quiz journey with real selections at every step — no skips. ~20 min total | ~40s per test',
     tests: [
       ...fullFlowTests('Undergraduate degree', 'ff-ug'),
       ...fullFlowTests('Graduate degree', 'ff-gr'),
@@ -91,7 +91,7 @@ const groups = [
   {
     id: 'rfi',
     name: 'RFI Submission (E2E)',
-    description: 'Full quiz flow + RFI form submission — complete end-to-end user journey',
+    description: 'Full quiz flow + RFI form submission — complete end-to-end user journey. ~2 min total | ~40s per test',
     tests: [
       { id: 'rfi-undergrad', name: 'Undergraduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Undergraduate degree"' },
       { id: 'rfi-grad', name: 'Graduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Graduate degree"' },
