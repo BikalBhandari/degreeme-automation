@@ -83,7 +83,7 @@ async function submitProgramCardRfi(page, cardIndex) {
   await submitBtn.click();
 
   // Confirmation
-  await page.getByText("We'll be in touch").waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+  await page.locator('text=/be in touch/i').first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
 
   // Close with the resize/collapse button (↗ icon at top-right of modal)
   const closeBtn = page.locator('button:has(svg), [class*="close"], [class*="collapse"]').filter({ has: page.locator('svg') }).first();
