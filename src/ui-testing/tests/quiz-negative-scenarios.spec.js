@@ -2,10 +2,10 @@
 const { test, expect } = require('@playwright/test');
 const { startQuiz, navigateToInterestAreas, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 
-const QUIZ_SESSION_URL = '**/quiz-session';
+const QUIZ_SERVICE_URL = '**/nonprod-degree-me-service*';
 
-// Navigate to the point just before results are generated
-async function navigateToGenerateResults(page) {
+// Navigate to Preferences screen (no skips — app won't prefetch results)
+async function navigateToPreferences(page) {
   await navigateToInterestAreas(page, { degreeType: 'Undergraduate degree' });
   await page.locator('p.m-0:text-is("Technology")').click();
   await page.getByRole('button', { name: /Continue/ }).click();
@@ -13,8 +13,10 @@ async function navigateToGenerateResults(page) {
   await page.locator('p.m-0:text-is("General technology")').click();
   await page.getByRole('button', { name: /Continue/ }).click();
   await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
-  await page.getByRole('button', { name: 'Skip to next question' }).first().click();
+  await page.getByText('Fast-paced', { exact: true }).click();
+  await page.getByRole('button', { name: /Continue/ }).click();
   await page.getByText('Preferences').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+  await page.getByText('Solving complex problems with data', { exact: true }).click();
 }
 
 // Navigate to RFI modal
@@ -38,15 +40,14 @@ test.describe('Negative Scenarios — AI & Network Failures', () => {
   test.setTimeout(180000);
 
   test('AI timeout shows error/retry message', async ({ page }) => {
-    await navigateToGenerateResults(page);
+    await navigateToPreferences(page);
 
-    // Set up interception AFTER navigation, before triggering results
-    // Block all subsequent quiz-session calls (the results generation)
-    await page.route(QUIZ_SESSION_URL, route => {
+    // Intercept the service URL — block all responses after this point
+    await page.route(QUIZ_SERVICE_URL, route => {
       // Never respond — simulates timeout
     });
 
-    await page.getByRole('button', { name: 'Skip to results' }).first().click();
+    await page.getByRole('button', { name: /Generate results/i }).click();
 
     // Should show animation initially
     const animation = page.getByText(/Analyzing your answers|Searching degrees/);
@@ -59,14 +60,14 @@ test.describe('Negative Scenarios — AI & Network Failures', () => {
   });
 
   test('Network failure shows error/retry message', async ({ page }) => {
-    await navigateToGenerateResults(page);
+    await navigateToPreferences(page);
 
-    // Set up interception AFTER navigation, before triggering results
-    await page.route(QUIZ_SESSION_URL, route => {
+    // Intercept the service URL and abort
+    await page.route(QUIZ_SERVICE_URL, route => {
       route.abort('failed');
     });
 
-    await page.getByRole('button', { name: 'Skip to results' }).first().click();
+    await page.getByRole('button', { name: /Generate results/i }).click();
 
     // Should show an error message
     const errorMessage = page.locator('text=/try again|error|something went wrong|unable/i');
