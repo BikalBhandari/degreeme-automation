@@ -118,8 +118,6 @@ const groups = [
       { id: 'pcrfi-all', name: 'Page-level + All 5 Cards RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "all 5 cards"' },
     ],
     runAllCommand: 'npx playwright test quiz-program-card-rfi --project=chromium',
-    reportJson: 'program-card-rfi-test-results.json',
-    reportHtml: 'quiz-program-card-rfi-report.html',
   },
   {
     id: 'negative',

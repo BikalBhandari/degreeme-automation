@@ -3,28 +3,9 @@ const { test, expect } = require('@playwright/test');
 const { startQuiz, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 const { generateRfiData } = require('./data/rfi-data');
 const { FULL_PATHS } = require('./data/quiz-paths');
-const fs = require('fs');
-const nodePath = require('path');
 
 const ANIMATION_MESSAGES = ['Analyzing your answers', 'Searching degrees and certificates'];
 const quizPath = FULL_PATHS.find(p => p.degreeType === 'Undergraduate degree');
-const RESULTS_FILE = nodePath.join(__dirname, '..', '..', '..', 'program-card-rfi-test-results.json');
-
-if (!fs.existsSync(RESULTS_FILE)) {
-  fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
-}
-
-function appendResult(result) {
-  try {
-    const existing = fs.existsSync(RESULTS_FILE)
-      ? JSON.parse(fs.readFileSync(RESULTS_FILE, 'utf8'))
-      : { timestamp: new Date().toISOString(), results: [] };
-    existing.results.push(result);
-    fs.writeFileSync(RESULTS_FILE, JSON.stringify(existing, null, 2));
-  } catch (e) {
-    fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [result] }, null, 2));
-  }
-}
 
 async function completeQuizToResults(page) {
   await startQuiz(page);
@@ -117,56 +98,16 @@ test.describe('Program Card RFI', () => {
   test.setTimeout(300000);
 
   test('Page-level + first card RFI submission', async ({ page }) => {
-    const start = Date.now();
-    const steps = [];
-    const rfiSubmissions = [];
-    try {
-      await completeQuizToResults(page);
-      steps.push({ name: 'Quiz Completed', status: 'pass' });
-
-      const pageRfi = generateRfiData(0);
-      await submitPageLevelRfi(page, 0);
-      steps.push({ name: 'Page-level RFI', status: 'pass' });
-      rfiSubmissions.push({ type: 'UNDECIDED', ...pageRfi });
-
-      await submitProgramCardRfi(page, 0);
-      const cardRfi = generateRfiData(10);
-      steps.push({ name: 'Card 1 RFI', status: 'pass' });
-      rfiSubmissions.push({ type: 'Program-specific', card: 1, ...cardRfi });
-
-      appendResult({ test: 'first-card', steps, rfiSubmissions, pass: true, error: '', duration: ((Date.now() - start) / 1000).toFixed(1) });
-    } catch (e) {
-      steps.push({ name: 'ERROR', status: 'fail', detail: e.message.split('\n')[0] });
-      appendResult({ test: 'first-card', steps, rfiSubmissions, pass: false, error: e.message.split('\n')[0], duration: ((Date.now() - start) / 1000).toFixed(1) });
-      throw e;
-    }
+    await completeQuizToResults(page);
+    await submitPageLevelRfi(page, 0);
+    await submitProgramCardRfi(page, 0);
   });
 
   test('Page-level + all 5 cards RFI submission', async ({ page }) => {
-    const start = Date.now();
-    const steps = [];
-    const rfiSubmissions = [];
-    try {
-      await completeQuizToResults(page);
-      steps.push({ name: 'Quiz Completed', status: 'pass' });
-
-      const pageRfi = generateRfiData(0);
-      await submitPageLevelRfi(page, 0);
-      steps.push({ name: 'Page-level RFI', status: 'pass' });
-      rfiSubmissions.push({ type: 'UNDECIDED', ...pageRfi });
-
-      for (let i = 0; i < 5; i++) {
-        await submitProgramCardRfi(page, i);
-        const cardRfi = generateRfiData(i + 10);
-        steps.push({ name: `Card ${i + 1} RFI`, status: 'pass' });
-        rfiSubmissions.push({ type: 'Program-specific', card: i + 1, ...cardRfi });
-      }
-
-      appendResult({ test: 'all-cards', steps, rfiSubmissions, pass: true, error: '', duration: ((Date.now() - start) / 1000).toFixed(1) });
-    } catch (e) {
-      steps.push({ name: 'ERROR', status: 'fail', detail: e.message.split('\n')[0] });
-      appendResult({ test: 'all-cards', steps, rfiSubmissions, pass: false, error: e.message.split('\n')[0], duration: ((Date.now() - start) / 1000).toFixed(1) });
-      throw e;
+    await completeQuizToResults(page);
+    await submitPageLevelRfi(page, 0);
+    for (let i = 0; i < 5; i++) {
+      await submitProgramCardRfi(page, i);
     }
   });
 });

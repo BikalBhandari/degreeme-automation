@@ -13,7 +13,6 @@
     "report:full-flow": "node src/ui-testing/tests/helpers/generate-full-flow-report.js",
     "report:rfi": "node src/ui-testing/tests/helpers/generate-rfi-report.js",
     "report:results": "node src/ui-testing/tests/helpers/generate-results-report.js",
-    "report:program-rfi": "node src/ui-testing/tests/helpers/generate-program-card-rfi-report.js",
     "test:rfi": "npx playwright test quiz-full-flow-withRFI --project=chromium; npm run report:rfi",
     "dashboard": "node src/dashboard/server.js"
   },
