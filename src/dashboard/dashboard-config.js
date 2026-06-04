@@ -77,8 +77,8 @@ const groups = [
   },
   {
     id: 'full-flow',
-    name: 'Full Flow (E2E)',
-    description: 'Complete quiz journey with real selections at every step — no skips',
+    name: 'Full Flow (Quiz Completion)',
+    description: 'Complete quiz journey with real selections at every step — no skips, validates results',
     tests: [
       ...fullFlowTests('Undergraduate degree', 'ff-ug'),
       ...fullFlowTests('Graduate degree', 'ff-gr'),
@@ -91,7 +91,7 @@ const groups = [
   {
     id: 'rfi',
     name: 'RFI Submission (E2E)',
-    description: 'Full quiz flow + UNDECIDED RFI submission via Request Info button',
+    description: 'Full quiz flow + RFI form submission — complete end-to-end user journey',
     tests: [
       { id: 'rfi-undergrad', name: 'Undergraduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Undergraduate degree"' },
       { id: 'rfi-grad', name: 'Graduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Graduate degree"' },
