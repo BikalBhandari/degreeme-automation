@@ -115,3 +115,79 @@ test.describe('Negative Scenarios — BritVerify Rejection', () => {
     await expect(phoneError.first()).toBeVisible();
   });
 });
+
+test.describe('Negative Scenarios — RFI Form Validation', () => {
+  test.setTimeout(120000);
+
+  const submitBtn = (page) => page.getByRole('button', { name: /submit/i });
+
+  test('Submit disabled on initial load', async ({ page }) => {
+    await navigateToRfiModal(page);
+    await expect(submitBtn(page)).toBeDisabled();
+  });
+
+  test('Submit disabled: First Name empty', async ({ page }) => {
+    await navigateToRfiModal(page);
+    await page.locator('#last-name').fill('embtestScenario');
+    await page.locator('#email').fill('edplusqatest+neg@gmail.com');
+    await page.locator('#asuonline_phone_number_id').fill('6025551234');
+    await page.locator('#military-false').click();
+    await expect(submitBtn(page)).toBeDisabled();
+  });
+
+  test('Submit disabled: Last Name empty', async ({ page }) => {
+    await navigateToRfiModal(page);
+    await page.locator('#first-name').fill('embtestNegative');
+    await page.locator('#email').fill('edplusqatest+neg@gmail.com');
+    await page.locator('#asuonline_phone_number_id').fill('6025551234');
+    await page.locator('#military-false').click();
+    await expect(submitBtn(page)).toBeDisabled();
+  });
+
+  test('Submit disabled: Email empty', async ({ page }) => {
+    await navigateToRfiModal(page);
+    await page.locator('#first-name').fill('embtestNegative');
+    await page.locator('#last-name').fill('embtestScenario');
+    await page.locator('#asuonline_phone_number_id').fill('6025551234');
+    await page.locator('#military-false').click();
+    await expect(submitBtn(page)).toBeDisabled();
+  });
+
+  test('Submit disabled: Phone Number empty', async ({ page }) => {
+    await navigateToRfiModal(page);
+    await page.locator('#first-name').fill('embtestNegative');
+    await page.locator('#last-name').fill('embtestScenario');
+    await page.locator('#email').fill('edplusqatest+neg@gmail.com');
+    await page.locator('#military-false').click();
+    await expect(submitBtn(page)).toBeDisabled();
+  });
+
+  test('Submit disabled: Invalid email format', async ({ page }) => {
+    await navigateToRfiModal(page);
+    await page.locator('#first-name').fill('embtestNegative');
+    await page.locator('#last-name').fill('embtestScenario');
+    await page.locator('#email').fill('test@invalid');
+    await page.locator('#asuonline_phone_number_id').fill('6025551234');
+    await page.locator('#military-false').click();
+    await expect(submitBtn(page)).toBeDisabled();
+  });
+
+  test('Submit disabled: Invalid phone format', async ({ page }) => {
+    await navigateToRfiModal(page);
+    await page.locator('#first-name').fill('embtestNegative');
+    await page.locator('#last-name').fill('embtestScenario');
+    await page.locator('#email').fill('edplusqatest+neg@gmail.com');
+    await page.locator('#asuonline_phone_number_id').fill('123');
+    await page.locator('#military-false').click();
+    await expect(submitBtn(page)).toBeDisabled();
+  });
+
+  test('Submit disabled: Military not selected', async ({ page }) => {
+    await navigateToRfiModal(page);
+    await page.locator('#first-name').fill('embtestNegative');
+    await page.locator('#last-name').fill('embtestScenario');
+    await page.locator('#email').fill('edplusqatest+neg@gmail.com');
+    await page.locator('#asuonline_phone_number_id').fill('6025551234');
+    await expect(submitBtn(page)).toBeDisabled();
+  });
+});
