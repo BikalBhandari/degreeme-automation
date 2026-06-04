@@ -10,7 +10,7 @@ test.describe('Quiz Discovery — Verify quiz options match config', () => {
   test('degree type options match expected list', async ({ page }) => {
     await startQuiz(page);
     for (const type of DEGREE_TYPES) {
-      await expect(page.getByText(type)).toBeVisible();
+      await expect(page.getByText(type, { exact: true })).toBeVisible();
     }
   });
 
