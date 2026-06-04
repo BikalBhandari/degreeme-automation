@@ -85,11 +85,11 @@ app.get('/api/reports/playwright', (req, res) => {
 
 // GET /api/reports/stakeholder/:type — regenerate and serve custom HTML report
 app.get('/api/reports/stakeholder/:type', (req, res) => {
-  const types = { 'full-flow': 'report:full-flow', 'rfi': 'report:rfi' };
+  const types = { 'full-flow': 'report:full-flow', 'rfi': 'report:rfi', 'results-undergrad': 'report:results', 'results-grad': 'report:results', 'results-cert': 'report:results' };
   const script = types[req.params.type];
   if (!script) return res.status(404).json({ error: 'Unknown report type' });
 
-  const files = { 'full-flow': 'quiz-full-flow-report.html', 'rfi': 'quiz-rfi-report.html' };
+  const files = { 'full-flow': 'quiz-full-flow-report.html', 'rfi': 'quiz-rfi-report.html', 'results-undergrad': 'quiz-results-report.html', 'results-grad': 'quiz-results-report.html', 'results-cert': 'quiz-results-report.html' };
   const filePath = path.join(PROJECT_ROOT, files[req.params.type]);
 
   // Regenerate from current JSON before serving

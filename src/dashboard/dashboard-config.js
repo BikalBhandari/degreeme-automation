@@ -61,6 +61,8 @@ const groups = [
       { id: 'results-undergrad-all', name: 'All undergraduate results', command: 'npx playwright test quiz-results-undergraduate --project=chromium' },
     ],
     runAllCommand: 'npx playwright test quiz-results-undergraduate --project=chromium',
+    reportJson: 'results-undergraduate-test-results.json',
+    reportHtml: 'quiz-results-report.html',
   },
   {
     id: 'results-grad',
@@ -70,6 +72,8 @@ const groups = [
       { id: 'results-grad-all', name: 'All graduate results', command: 'npx playwright test quiz-results-graduate --project=chromium' },
     ],
     runAllCommand: 'npx playwright test quiz-results-graduate --project=chromium',
+    reportJson: 'results-graduate-test-results.json',
+    reportHtml: 'quiz-results-report.html',
   },
   {
     id: 'results-cert',
@@ -79,6 +83,8 @@ const groups = [
       { id: 'results-cert-all', name: 'All certificate results', command: 'npx playwright test quiz-results-certificate --project=chromium' },
     ],
     runAllCommand: 'npx playwright test quiz-results-certificate --project=chromium',
+    reportJson: 'results-certificate-test-results.json',
+    reportHtml: 'quiz-results-report.html',
   },
   {
     id: 'per-screen',
