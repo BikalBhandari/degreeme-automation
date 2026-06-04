@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DegreeMe Test Dashboard</title>
+<style>
+:root{--maroon:#8C1D40;--gold:#FFC627;--green:#78BE20;--orange:#FF7F32;--blue:#00A3E0;--white:#FFFFFF;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-600:#4b5563;--gray-700:#374151;--gray-900:#111827;--radius:8px;--shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);--shadow-md:0 4px 6px rgba(0,0,0,0.07),0 2px 4px rgba(0,0,0,0.06);--space-xs:0.25rem;--space-sm:0.5rem;--space-md:1rem;--space-lg:1.5rem;--space-xl:2rem}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--gray-100);color:var(--gray-900);height:100vh;display:flex;flex-direction:column}
+.header{background:var(--maroon);color:var(--white);padding:var(--space-md) var(--space-xl);display:flex;align-items:center;gap:var(--space-md);box-shadow:var(--shadow-md);z-index:10}
+.header h1{font-size:1.2rem;font-weight:700}
+.header .subtitle{font-size:0.8rem;opacity:0.8}
+.app{display:flex;flex:1;overflow:hidden}
+
+/* Left Navigation */
+.sidebar{width:280px;background:var(--white);border-right:1px solid var(--gray-200);overflow-y:auto;box-shadow:var(--shadow);flex-shrink:0}
+.sidebar-header{padding:var(--space-md);font-size:0.75rem;font-weight:600;text-transform:uppercase;color:var(--gray-600);border-bottom:1px solid var(--gray-200)}
+.nav-group{border-bottom:1px solid var(--gray-100)}
+.nav-group-header{display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) var(--space-md);cursor:pointer;transition:background 0.15s;user-select:none}
+.nav-group-header:hover{background:var(--gray-50)}
+.nav-group-header.active{background:#f3e8ec;border-left:3px solid var(--maroon)}
+.nav-group-header .arrow{font-size:0.6rem;color:var(--gray-600);transition:transform 0.2s;width:12px}
+.nav-group-header .arrow.open{transform:rotate(90deg)}
+.nav-group-header .folder-icon{font-size:0.9rem}
+.nav-group-header .name{flex:1;font-size:0.85rem;font-weight:500;color:var(--gray-700)}
+.nav-group-header .count{font-size:0.7rem;background:var(--gray-200);color:var(--gray-600);padding:0.1rem 0.4rem;border-radius:10px;font-weight:600}
+.nav-group-tests{display:none;padding-left:2.2rem}
+.nav-group-tests.open{display:block}
+.nav-test-item{padding:var(--space-xs) var(--space-md);font-size:0.8rem;color:var(--gray-600);cursor:pointer;border-radius:4px;margin:1px 0.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-test-item:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-test-item.active{background:#f3e8ec;color:var(--maroon);font-weight:500}
+
+/* Main Content */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.toolbar{display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) var(--space-xl);background:var(--white);border-bottom:1px solid var(--gray-200);box-shadow:var(--shadow)}
+.toolbar h2{font-size:1rem;font-weight:600;color:var(--maroon)}
+.toolbar-desc{font-size:0.8rem;color:var(--gray-600);margin-top:0.15rem}
+.toolbar .run-all-btn{margin-left:auto;background:var(--maroon);color:var(--white);border:none;padding:var(--space-sm) var(--space-md);border-radius:var(--radius);cursor:pointer;font-size:0.8rem;font-weight:600;transition:opacity 0.2s;box-shadow:var(--shadow)}
+.toolbar .run-all-btn:hover{opacity:0.85}
+.toolbar .run-all-btn:disabled{opacity:0.5;cursor:not-allowed}
+
+/* Data Grid */
+.grid-container{flex:1;overflow:auto;padding:var(--space-lg) var(--space-xl)}
+.data-grid{width:100%;border-collapse:separate;border-spacing:0;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.data-grid thead{position:sticky;top:0;z-index:1}
+.data-grid th{background:var(--gray-50);padding:var(--space-sm) var(--space-md);text-align:left;font-size:0.75rem;font-weight:600;text-transform:uppercase;color:var(--gray-600);border-bottom:2px solid var(--gray-200)}
+.data-grid td{padding:var(--space-sm) var(--space-md);border-bottom:1px solid var(--gray-100);font-size:0.85rem;vertical-align:middle}
+.data-grid tr:last-child td{border-bottom:none}
+.data-grid tr:hover td{background:var(--gray-50)}
+.test-name-cell{font-weight:500;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:0.2rem 0.6rem;border-radius:12px;font-size:0.75rem;font-weight:600}
+.status-badge.idle{background:var(--gray-100);color:var(--gray-600)}
+.status-badge.running{background:#fef3c7;color:#92400e}
+.status-badge.pass{background:#dcfce7;color:#166534}
+.status-badge.fail{background:#fee2e2;color:#991b1b}
+.spinner-sm{display:inline-block;width:10px;height:10px;border:2px solid var(--gold);border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.action-btn{border:none;padding:0.3rem 0.7rem;border-radius:var(--radius);cursor:pointer;font-size:0.75rem;font-weight:500;transition:opacity 0.2s}
+.run-btn{background:var(--maroon);color:var(--white)}
+.run-btn:hover{opacity:0.85}
+.run-btn:disabled{opacity:0.5;cursor:not-allowed}
+.stop-btn{background:var(--orange);color:var(--white)}
+.stop-btn:hover{opacity:0.85}
+.report-link{color:var(--blue);text-decoration:none;font-size:0.75rem;font-weight:500;margin-right:var(--space-sm)}
+.report-link:hover{text-decoration:underline}
+.duration-text{font-size:0.8rem;color:var(--gray-600)}
+.actions-cell{display:flex;align-items:center;gap:var(--space-sm);flex-wrap:wrap}
+.no-reports{color:var(--gray-300);font-size:0.75rem;font-style:italic}
+
+/* Responsive */
+@media(max-width:1024px){
+  .sidebar{width:220px}
+  .grid-container{padding:var(--space-md)}
+}
+@media(max-width:768px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;max-height:200px;border-right:none;border-bottom:1px solid var(--gray-200)}
+}
+</style>
+</head>
+<body>
+<div class="header">
+<div>
+<h1><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>DegreeMe Test Dashboard</h1>
+<p class="subtitle">ASU Online — Test Automation Suite</p>
+</div>
+</div>
+<div class="app">
+<nav class="sidebar">
+<div class="sidebar-header">Test Groups</div>
+<div id="nav"></div>
+</nav>
+<div class="main">
+<div class="toolbar">
+<div>
+<h2 id="toolbar-title">Select a group</h2>
+<p id="toolbar-desc" class="toolbar-desc">Choose a test group from the left panel to view and run tests</p>
+</div>
+<button class="run-all-btn" id="run-all-btn" style="display:none" onclick="runCurrentGroup()">Run All</button>
+</div>
+<div class="grid-container">
+<table class="data-grid">
+<thead>
+<tr>
+<th>Test Name</th>
+<th>Status</th>
+<th>Duration</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="grid-body">
+<tr><td colspan="4" style="text-align:center;color:var(--gray-600);padding:3rem">Select a test group from the left panel</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<script>
+let groupsData = [];
+let activeGroupId = null;
+let testStates = {};
+
+async function loadTests() {
+  const res = await fetch('/api/tests');
+  groupsData = await res.json();
+  renderNav();
+  if (groupsData.length) selectGroup(groupsData[0].id);
+}
+
+function renderNav() {
+  const nav = document.getElementById('nav');
+  nav.innerHTML = groupsData.map(g => `
+    <div class="nav-group" data-group-id="${g.id}">
+      <div class="nav-group-header" onclick="selectGroup('${g.id}')">
+        <span class="folder-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+        <span class="name">${g.name}</span>
+        <span class="count">${g.tests.length}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectGroup(groupId) {
+  activeGroupId = groupId;
+  document.querySelectorAll('.nav-group-header').forEach(h => h.classList.remove('active'));
+  const el = document.querySelector(`[data-group-id="${groupId}"] .nav-group-header`);
+  if (el) el.classList.add('active');
+
+  const group = groupsData.find(g => g.id === groupId);
+  document.getElementById('toolbar-title').textContent = group.name;
+  document.getElementById('toolbar-desc').textContent = group.description;
+  document.getElementById('run-all-btn').style.display = 'inline-block';
+  document.getElementById('run-all-btn').textContent = `Run All (${group.tests.length})`;
+  renderGrid(group);
+}
+
+function renderGrid(group) {
+  const tbody = document.getElementById('grid-body');
+  tbody.innerHTML = group.tests.map(t => {
+    const state = testStates[t.id] || { status: 'idle', duration: '' };
+    return `<tr id="row-${t.id}">
+      <td class="test-name-cell" title="${t.name}">${t.name}</td>
+      <td>${renderStatus(state)}</td>
+      <td class="duration-text">${state.duration ? state.duration + 's' : '—'}</td>
+      <td class="actions-cell">${renderActions(t.id, state, group)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStatus(state) {
+  if (state.status === 'running') return '<span class="status-badge running"><span class="spinner-sm"></span>Running</span>';
+  if (state.status === 'pass') return '<span class="status-badge pass">✓ Pass</span>';
+  if (state.status === 'fail') return '<span class="status-badge fail">✗ Fail</span>';
+  return '<span class="status-badge idle">Idle</span>';
+}
+
+function renderActions(testId, state, group) {
+  let html = '';
+  if (state.status === 'running') {
+    html += `<button class="action-btn stop-btn" onclick="stopTest('${testId}')">Stop</button>`;
+  } else {
+    html += `<button class="action-btn run-btn" onclick="runTest('${testId}')">Run</button>`;
+  }
+  if (state.status === 'pass' || state.status === 'fail') {
+    if (group.reportHtml) {
+      const reportType = group.id.startsWith('results-') ? group.id : group.id === 'rfi' ? 'rfi' : 'full-flow';
+      html += `<a class="report-link" href="/api/reports/stakeholder/${reportType}" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Stakeholder</a>`;
+    }
+    html += `<a class="report-link" href="#" onclick="openPlaywrightReport();return false;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Playwright</a>`;
+  }
+  return html;
+}
+
+function updateRow(testId) {
+  const group = groupsData.find(g => g.id === activeGroupId);
+  if (!group) return;
+  const t = group.tests.find(t => t.id === testId);
+  if (!t) return;
+  const state = testStates[testId] || { status: 'idle', duration: '' };
+  const row = document.getElementById('row-' + testId);
+  if (!row) return;
+  row.innerHTML = `
+    <td class="test-name-cell" title="${t.name}">${t.name}</td>
+    <td>${renderStatus(state)}</td>
+    <td class="duration-text">${state.duration ? state.duration + 's' : '—'}</td>
+    <td class="actions-cell">${renderActions(testId, state, group)}</td>
+  `;
+}
+
+async function runTest(testId) {
+  testStates[testId] = { status: 'running', duration: '' };
+  updateRow(testId);
+  try {
+    const res = await fetch('/api/run-test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ testId })
+    });
+    const data = await res.json();
+    testStates[testId] = { status: data.pass ? 'pass' : 'fail', duration: data.duration };
+  } catch (e) {
+    testStates[testId] = { status: 'fail', duration: '0' };
+  }
+  updateRow(testId);
+}
+
+async function runCurrentGroup() {
+  const group = groupsData.find(g => g.id === activeGroupId);
+  if (!group) return;
+  const btn = document.getElementById('run-all-btn');
+  btn.disabled = true;
+  btn.textContent = 'Running...';
+  group.tests.forEach(t => { testStates[t.id] = { status: 'running', duration: '' }; updateRow(t.id); });
+  try {
+    const res = await fetch('/api/run-group', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ groupId: activeGroupId })
+    });
+    const data = await res.json();
+    group.tests.forEach(t => { testStates[t.id] = { status: data.pass ? 'pass' : 'fail', duration: data.duration }; updateRow(t.id); });
+  } catch (e) {
+    group.tests.forEach(t => { testStates[t.id] = { status: 'fail', duration: '0' }; updateRow(t.id); });
+  }
+  btn.disabled = false;
+  btn.textContent = `Run All (${group.tests.length})`;
+}
+
+async function stopTest(testId) {
+  await fetch('/api/stop-test', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ testId })
+  });
+  testStates[testId] = { status: 'idle', duration: '' };
+  updateRow(testId);
+}
+
+function openPlaywrightReport() {
+  fetch('/api/reports/playwright').then(() => {
+    setTimeout(() => window.open('http://localhost:9323', '_blank'), 1500);
+  });
+}
+
+loadTests();
+</script>
+</body>
+</html>

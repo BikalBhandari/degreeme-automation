@@ -15,6 +15,21 @@ npm install
 npx playwright install
 ```
 
+## Dashboard
+
+A web-based test launcher with ASU branding. Run tests via button clicks instead of the terminal.
+
+```bash
+npm run dashboard
+```
+
+Opens `http://localhost:4400` with:
+- Test cards grouped by category (Full Flow, RFI, Results, Per-Screen, Discovery)
+- "Run All" button per group
+- Individual "Run" button per test
+- Live status: spinner → pass/fail with duration
+- Links to Playwright report (debug) and Stakeholder report (shareable)
+
 ## Running Tests
 
 ```bash

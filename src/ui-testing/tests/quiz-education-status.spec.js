@@ -10,7 +10,7 @@ test.describe('Quiz - Education Status', () => {
   test('displays education status screen', async ({ page }) => {
     await expect(page.getByText('Education status')).toBeVisible();
     await expect(page.getByRole('heading', { name: /Do you currently have any of the following/ })).toBeVisible();
-    await expect(page.getByText('Select all that apply:')).toBeVisible();
+    await expect(page.locator('.select-all-text:visible').first()).toBeVisible();
   });
 
   test('shows all credential options', async ({ page }) => {
@@ -37,7 +37,7 @@ test.describe('Quiz - Education Status', () => {
     await page.getByText('High school diploma or GED').click();
     await page.getByText('Bachelor of Arts (BA)').click();
     // Both should be selected — Continue button should be available
-    await expect(page.getByRole('button', { name: /Continue/ })).toBeVisible();
+    await expect(page.locator('button:visible', { hasText: 'Continue' }).last()).toBeVisible();
   });
 
   test('skip advances to interest areas', async ({ page }) => {
@@ -46,7 +46,7 @@ test.describe('Quiz - Education Status', () => {
   });
 
   test('back returns to degree type selection', async ({ page }) => {
-    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('button', { name: 'Back' }).last().click();
     await page.getByRole('heading', { name: 'What are you interested in pursuing?' }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

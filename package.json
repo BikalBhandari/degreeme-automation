@@ -12,10 +12,15 @@
     "report": "npx playwright show-report",
     "report:full-flow": "node src/ui-testing/tests/helpers/generate-full-flow-report.js",
     "report:rfi": "node src/ui-testing/tests/helpers/generate-rfi-report.js",
-    "test:rfi": "npx playwright test quiz-full-flow-withRFI --project=chromium; npm run report:rfi"
+    "report:results": "node src/ui-testing/tests/helpers/generate-results-report.js",
+    "test:rfi": "npx playwright test quiz-full-flow-withRFI --project=chromium; npm run report:rfi",
+    "dashboard": "node src/dashboard/server.js"
   },
   "devDependencies": {
     "@playwright/test": "1.52.0",
     "dotenv": "16.4.7"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
   }
 }

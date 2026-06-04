@@ -75,15 +75,16 @@ ${['Undergraduate degree', 'Graduate degree', 'Graduate certificate'].map(dt => 
     if (!group.length) return '';
     const gp = group.filter(r => r.pass).length;
     return `<div class="section-title">${dt} (${gp}/${group.length} passed)</div>
-${group.map(r => `<details>
+${group.map(r => `<details open>
 <summary>
 <span class="icon ${r.pass ? 'pass' : 'fail'}">${r.pass ? '✓' : '✗'}</span>
 <span class="test-name">${r.interest}</span>
 <span class="test-dur">${r.duration}s</span>
 <span class="test-cards">${(r.degreeCards || []).length} cards</span>
 </summary>
-<ul class="card-list">${(r.degreeCards || []).map((c, i) => `<li>${i + 1}. ${c}</li>`).join('')}
-${r.pass ? '' : `<li class="error-msg">${r.error || 'Failed'}</li>`}</ul>
+${(r.steps || []).length ? `<ul class="card-list">${r.steps.map(s => `<li>${s.status === 'pass' ? '✓' : '✗'} ${s.name}${s.detail ? ` — ${s.detail}` : ''}</li>`).join('')}</ul>` : ''}
+${(r.degreeCards || []).length ? `<ul class="card-list"><li><strong>Degree Cards:</strong></li>${r.degreeCards.map((c, i) => `<li>${i + 1}. ${c}</li>`).join('')}</ul>` : ''}
+${r.pass ? '' : `<div class="error-msg">${r.error || 'Failed'}</div>`}
 </details>`).join('')}`;
   }).join('')}
 </div>

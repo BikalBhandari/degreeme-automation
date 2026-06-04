@@ -21,7 +21,7 @@ test.describe('Quiz - Degree Type Selection', () => {
 
   test('shows navigation controls', async ({ page }) => {
     await expect(page.getByRole('button', { name: 'Back' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Continue/ })).toBeVisible();
+    await expect(page.locator('button:visible', { hasText: 'Continue' }).last()).toBeVisible();
   });
 
   test('can select Undergraduate degree and continue', async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe('Quiz - Degree Type Selection', () => {
   });
 
   test('Back link returns to homepage', async ({ page }) => {
-    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('button', { name: 'Back' }).last().click();
     await page.locator('button:has-text("Take the quiz")').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

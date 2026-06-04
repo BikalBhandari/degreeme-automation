@@ -9,7 +9,7 @@ test.describe('Quiz - Interest Drilldown (Business)', () => {
 
   test('displays Business drilldown screen', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /What area of.*Business/ })).toBeVisible();
-    await expect(page.getByText('Select all that apply:')).toBeVisible();
+    await expect(page.locator('.select-all-text:visible').first()).toBeVisible();
   });
 
   test('shows Business sub-options', async ({ page }) => {
@@ -28,12 +28,12 @@ test.describe('Quiz - Interest Drilldown (Business)', () => {
   });
 
   test('continue is disabled without selection', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /Continue/ })).toBeDisabled();
+    await expect(page.locator('button:visible', { hasText: 'Continue' }).last()).toBeDisabled();
   });
 
   test('continue becomes enabled after selection', async ({ page }) => {
     await page.getByText('General business').click();
-    await expect(page.getByRole('button', { name: /Continue/ })).toBeEnabled();
+    await expect(page.locator('button:visible', { hasText: 'Continue' }).last()).toBeEnabled();
   });
 
   test('advances to Environments after completing drilldown', async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe('Quiz - Interest Drilldown (Business)', () => {
   });
 
   test('back returns to interest areas', async ({ page }) => {
-    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('button', { name: 'Back' }).last().click();
     await page.getByRole('heading', { name: /What fields excite you the most/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });
@@ -54,7 +54,7 @@ test.describe('Quiz - Interest Drilldown (multiple fields)', () => {
   });
 
   test('shows tab header with both fields', async ({ page }) => {
-    await expect(page.getByText('Business | Technology')).toBeVisible();
+    await expect(page.getByText('Business | Technology').first()).toBeVisible();
   });
 
   test('completing first drilldown advances to second', async ({ page }) => {
