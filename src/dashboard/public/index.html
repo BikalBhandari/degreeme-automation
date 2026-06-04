@@ -127,37 +127,20 @@ function renderNav() {
   const nav = document.getElementById('nav');
   nav.innerHTML = groupsData.map(g => `
     <div class="nav-group" data-group-id="${g.id}">
-      <div class="nav-group-header" onclick="toggleGroup('${g.id}')">
-        <span class="arrow">▶</span>
+      <div class="nav-group-header" onclick="selectGroup('${g.id}')">
         <span class="folder-icon">📁</span>
         <span class="name">${g.name}</span>
         <span class="count">${g.tests.length}</span>
-      </div>
-      <div class="nav-group-tests">
-        ${g.tests.map(t => `<div class="nav-test-item" onclick="selectGroup('${g.id}','${t.id}')" title="${t.name}">${t.name}</div>`).join('')}
       </div>
     </div>
   `).join('');
 }
 
-function toggleGroup(groupId) {
-  const el = document.querySelector(`[data-group-id="${groupId}"]`);
-  const tests = el.querySelector('.nav-group-tests');
-  const arrow = el.querySelector('.arrow');
-  tests.classList.toggle('open');
-  arrow.classList.toggle('open');
-}
-
-function selectGroup(groupId, scrollToTest) {
+function selectGroup(groupId) {
   activeGroupId = groupId;
-  // Update nav active state
   document.querySelectorAll('.nav-group-header').forEach(h => h.classList.remove('active'));
   const el = document.querySelector(`[data-group-id="${groupId}"] .nav-group-header`);
   if (el) el.classList.add('active');
-  // Expand the group
-  const tests = document.querySelector(`[data-group-id="${groupId}"] .nav-group-tests`);
-  const arrow = document.querySelector(`[data-group-id="${groupId}"] .arrow`);
-  if (tests && !tests.classList.contains('open')) { tests.classList.add('open'); arrow.classList.add('open'); }
 
   const group = groupsData.find(g => g.id === groupId);
   document.getElementById('toolbar-title').textContent = group.name;
