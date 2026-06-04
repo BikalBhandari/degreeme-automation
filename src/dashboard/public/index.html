@@ -11,6 +11,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .header{background:var(--maroon);color:var(--white);padding:var(--space-md) var(--space-xl);display:flex;align-items:center;gap:var(--space-md);box-shadow:var(--shadow-md);z-index:10}
 .header h1{font-size:1.2rem;font-weight:700}
 .header .subtitle{font-size:0.8rem;opacity:0.8}
+.env-switcher{margin-left:auto;display:flex;align-items:center;gap:var(--space-sm)}
+.env-label{font-size:0.75rem;opacity:0.8}
+.env-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:var(--white);padding:0.3rem 0.8rem;border-radius:var(--radius);font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.env-btn:hover{background:rgba(255,255,255,0.25)}
+.env-btn.active{background:var(--gold);color:var(--gray-900);border-color:var(--gold)}
+.env-btn.prod-active{background:var(--orange);color:var(--white);border-color:var(--orange)}
 .app{display:flex;flex:1;overflow:hidden}
 
 /* Left Navigation */
@@ -85,6 +91,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <h1><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>DegreeMe Test Dashboard</h1>
 <p class="subtitle">ASU Online — Test Automation Suite</p>
 </div>
+<div class="env-switcher">
+<label class="env-label">Environment:</label>
+<button class="env-btn active" id="env-nonprod" onclick="switchEnv('nonprod')">Nonprod</button>
+<button class="env-btn" id="env-prod" onclick="switchEnv('prod')">Prod</button>
+</div>
 </div>
 <div class="app">
 <nav class="sidebar">
@@ -127,6 +138,24 @@ async function loadTests() {
   groupsData = await res.json();
   renderNav();
   if (groupsData.length) selectGroup(groupsData[0].id);
+  // Load current env
+  const envRes = await fetch('/api/env');
+  const { env } = await envRes.json();
+  updateEnvUI(env);
+}
+
+async function switchEnv(env) {
+  await fetch('/api/env', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ env })
+  });
+  updateEnvUI(env);
+}
+
+function updateEnvUI(env) {
+  document.getElementById('env-nonprod').className = 'env-btn' + (env === 'nonprod' ? ' active' : '');
+  document.getElementById('env-prod').className = 'env-btn' + (env === 'prod' ? ' prod-active' : '');
 }
 
 function renderNav() {
