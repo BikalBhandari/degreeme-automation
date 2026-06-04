@@ -102,6 +102,16 @@ const groups = [
     reportHtml: 'quiz-rfi-report.html',
   },
   {
+    id: 'program-card-rfi',
+    name: 'Program Card RFI (E2E)',
+    description: 'Page-level RFI + program-specific RFI from expanded cards. ~4 min total | ~60s per card',
+    tests: [
+      { id: 'pcrfi-first', name: 'Page-level + First Card RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "first card"' },
+      { id: 'pcrfi-all', name: 'Page-level + All 5 Cards RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "all 5 cards"' },
+    ],
+    runAllCommand: 'npx playwright test quiz-program-card-rfi --project=chromium',
+  },
+  {
     id: 'negative',
     name: 'Negative Scenarios',
     description: 'Error handling and form validation. ~2 min total | ~15s per validation test',
