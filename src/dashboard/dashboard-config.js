@@ -101,6 +101,20 @@ const groups = [
     reportJson: 'rfi-test-results.json',
     reportHtml: 'quiz-rfi-report.html',
   },
+  {
+    id: 'cross-browser',
+    name: 'Cross-Browser',
+    description: 'Representative paths on Chromium, Firefox, and WebKit. ~4 min total | ~40s per browser',
+    tests: [
+      { id: 'xb-full-flow-chromium', name: 'Full Flow (Chromium)', command: 'npx playwright test quiz-full-flow --project=chromium -g "Full flow .+ Undergraduate degree .+ Technology"' },
+      { id: 'xb-full-flow-firefox', name: 'Full Flow (Firefox)', command: 'npx playwright test quiz-full-flow --project=firefox -g "Full flow .+ Undergraduate degree .+ Technology"' },
+      { id: 'xb-full-flow-webkit', name: 'Full Flow (WebKit)', command: 'npx playwright test quiz-full-flow --project=webkit -g "Full flow .+ Undergraduate degree .+ Technology"' },
+      { id: 'xb-rfi-chromium', name: 'RFI Submission (Chromium)', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Undergraduate degree"' },
+      { id: 'xb-rfi-firefox', name: 'RFI Submission (Firefox)', command: 'npx playwright test quiz-full-flow-withRFI --project=firefox -g "Full flow with RFI .+ Undergraduate degree"' },
+      { id: 'xb-rfi-webkit', name: 'RFI Submission (WebKit)', command: 'npx playwright test quiz-full-flow-withRFI --project=webkit -g "Full flow with RFI .+ Undergraduate degree"' },
+    ],
+    runAllCommand: 'npx playwright test quiz-full-flow -g "Full flow .+ Undergraduate degree .+ Technology" && npx playwright test quiz-full-flow-withRFI -g "Full flow with RFI .+ Undergraduate degree"',
+  },
 ];
 
 module.exports = { groups };
