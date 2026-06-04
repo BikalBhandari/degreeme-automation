@@ -102,6 +102,18 @@ const groups = [
     reportHtml: 'quiz-rfi-report.html',
   },
   {
+    id: 'negative',
+    name: 'Negative Scenarios',
+    description: 'Error handling: AI timeout, network failure, BritVerify rejection. ~30s total | simulated',
+    tests: [
+      { id: 'neg-ai-timeout', name: 'AI Timeout — shows retry message', command: 'npx playwright test quiz-negative-scenarios --project=chromium -g "AI timeout"' },
+      { id: 'neg-network-fail', name: 'Network Failure — shows error message', command: 'npx playwright test quiz-negative-scenarios --project=chromium -g "Network failure"' },
+      { id: 'neg-invalid-email', name: 'Invalid Email — BritVerify rejection', command: 'npx playwright test quiz-negative-scenarios --project=chromium -g "invalid email"' },
+      { id: 'neg-invalid-phone', name: 'Invalid Phone — BritVerify rejection', command: 'npx playwright test quiz-negative-scenarios --project=chromium -g "invalid phone"' },
+    ],
+    runAllCommand: 'npx playwright test quiz-negative-scenarios --project=chromium',
+  },
+  {
     id: 'cross-browser',
     name: 'Cross-Browser',
     description: 'Representative paths on Chromium, Firefox, and WebKit. ~4 min total | ~40s per browser',
