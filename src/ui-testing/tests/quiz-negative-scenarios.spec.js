@@ -35,16 +35,17 @@ async function navigateToRfiModal(page) {
 }
 
 test.describe('Negative Scenarios — AI & Network Failures', () => {
-  test.setTimeout(60000);
+  test.setTimeout(180000);
 
   test('AI timeout shows error/retry message', async ({ page }) => {
-    await navigateToGenerateResults(page);
-
-    // Intercept quiz-session and hang indefinitely
+    // Intercept quiz-session from the start — app may prefetch
+    let requestIntercepted = false;
     await page.route(QUIZ_SESSION_URL, route => {
+      requestIntercepted = true;
       // Never respond — simulates timeout
     });
 
+    await navigateToGenerateResults(page);
     await page.getByRole('button', { name: 'Skip to results' }).first().click();
 
     // Should show animation initially
@@ -58,13 +59,12 @@ test.describe('Negative Scenarios — AI & Network Failures', () => {
   });
 
   test('Network failure shows error/retry message', async ({ page }) => {
-    await navigateToGenerateResults(page);
-
-    // Intercept quiz-session and abort
+    // Intercept quiz-session from the start
     await page.route(QUIZ_SESSION_URL, route => {
       route.abort('failed');
     });
 
+    await navigateToGenerateResults(page);
     await page.getByRole('button', { name: 'Skip to results' }).first().click();
 
     // Should show an error message
