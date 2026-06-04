@@ -87,6 +87,7 @@ npx playwright show-report
 # Custom human-readable reports (stakeholder-friendly)
 npm run report:full-flow        # From full-flow-test-results.json → quiz-full-flow-report.html
 npm run report:rfi              # From rfi-test-results.json → quiz-rfi-report.html
+npm run report:results          # From results-*-test-results.json → quiz-results-report.html
 ```
 
 Workflow:
@@ -154,6 +155,11 @@ npx playwright test src/ui-testing/tests/homepage.spec.js --headed
 
 ```
 src/
+├── dashboard/
+│   ├── public/
+│   │   └── index.html              ← Dashboard frontend (ASU-branded SPA)
+│   ├── dashboard-config.js         ← Test groups, commands, metadata
+│   └── server.js                   ← Express server (port 4400)
 ├── ui-testing/
 │   ├── specs/                  ← Functional test specs (plain language)
 │   ├── tests/
@@ -161,9 +167,10 @@ src/
 │   │   │   ├── quiz-paths.js  ← Test configuration (degree types, interests, keywords)
 │   │   │   └── rfi-data.js    ← RFI test data generator (names, email, phone, military)
 │   │   ├── helpers/
-│   │   │   ├── quiz-navigation.js       ← Shared navigation helpers
+│   │   │   ├── quiz-navigation.js            ← Shared navigation helpers
 │   │   │   ├── generate-full-flow-report.js  ← Stakeholder report (reads JSON)
-│   │   │   └── generate-rfi-report.js        ← RFI stakeholder report (reads JSON)
+│   │   │   ├── generate-rfi-report.js        ← RFI stakeholder report (reads JSON)
+│   │   │   └── generate-results-report.js    ← Results validation report (reads JSON)
 │   │   ├── quiz-discovery.spec.js       ← Early warning if quiz options change
 │   │   ├── quiz-full-flow.spec.js       ← Full quiz flow (27 paths)
 │   │   ├── quiz-full-flow-withRFI.spec.js  ← Full flow + RFI submission (3 paths)
