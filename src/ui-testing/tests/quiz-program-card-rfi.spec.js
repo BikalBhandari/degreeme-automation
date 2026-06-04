@@ -69,8 +69,8 @@ async function submitProgramCardRfi(page, cardIndex) {
   await page.getByRole('button', { name: 'Connect with us' }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.getByRole('button', { name: 'Connect with us' }).click();
 
-  // RFI form opens
-  await page.getByText('Connect with us').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+  // Wait for RFI form to appear (first-name field indicates form is loaded)
+  await page.locator('#first-name').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
 
   await page.locator('#first-name').fill(rfi.firstName);
   await page.locator('#last-name').fill(rfi.lastName);
