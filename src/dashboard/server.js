@@ -19,6 +19,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Track running processes
 const runningProcesses = {};
 
+// Current environment
+let currentEnv = 'nonprod';
+
+// GET /api/env — get current environment
+app.get('/api/env', (req, res) => {
+  res.json({ env: currentEnv });
+});
+
+// POST /api/env — switch environment
+app.post('/api/env', (req, res) => {
+  const { env } = req.body;
+  if (!['nonprod', 'prod'].includes(env)) return res.status(400).json({ error: 'Invalid env. Use "nonprod" or "prod".' });
+  currentEnv = env;
+  console.log(`\n🔄 Environment switched to: ${env.toUpperCase()}\n`);
+  res.json({ env: currentEnv });
+});
+
 // GET /api/tests — return groups with last run status
 app.get('/api/tests', (req, res) => {
   const result = groups.map(group => {
@@ -52,7 +69,7 @@ app.post('/api/run-test', (req, res) => {
   }
 
   const start = Date.now();
-  const child = exec(testConfig.command, { cwd: PROJECT_ROOT, timeout: 300000 }, (error, stdout, stderr) => {
+  const child = exec(testConfig.command, { cwd: PROJECT_ROOT, timeout: 300000, env: { ...process.env, ENV: currentEnv } }, (error, stdout, stderr) => {
     delete runningProcesses[testId];
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     const pass = !error;
@@ -74,7 +91,7 @@ app.post('/api/run-group', (req, res) => {
   }
 
   const start = Date.now();
-  const child = exec(group.runAllCommand, { cwd: PROJECT_ROOT, timeout: 600000 }, (error, stdout, stderr) => {
+  const child = exec(group.runAllCommand, { cwd: PROJECT_ROOT, timeout: 600000, env: { ...process.env, ENV: currentEnv } }, (error, stdout, stderr) => {
     delete runningProcesses[`group-${groupId}`];
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     const pass = !error;
