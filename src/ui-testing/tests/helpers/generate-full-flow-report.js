@@ -82,8 +82,9 @@ ${group.map(r => `<details>
 <span class="test-dur">${r.duration}s</span>
 <span class="test-cards">${(r.degreeCards || []).length} cards</span>
 </summary>
-<ul class="card-list">${(r.degreeCards || []).map((c, i) => `<li>${i + 1}. ${c}</li>`).join('')}
-${r.pass ? '' : `<li class="error-msg">${r.error || 'Failed'}</li>`}</ul>
+${(r.steps || []).length ? `<ul class="card-list">${r.steps.map(s => `<li>${s.status === 'pass' ? '✓' : '✗'} ${s.name}${s.detail ? ` — ${s.detail}` : ''}</li>`).join('')}</ul>` : ''}
+${(r.degreeCards || []).length ? `<ul class="card-list"><li><strong>Degree Cards:</strong></li>${r.degreeCards.map((c, i) => `<li>${i + 1}. ${c}</li>`).join('')}</ul>` : ''}
+${r.pass ? '' : `<div class="error-msg">${r.error || 'Failed'}</div>`}
 </details>`).join('')}`;
   }).join('')}
 </div>
