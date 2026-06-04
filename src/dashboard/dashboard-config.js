@@ -2,39 +2,29 @@
  * Dashboard configuration — defines test groups and individual tests.
  */
 
+const INTEREST_AREAS = [
+  'Arts, culture and society', 'Business', 'Education', 'Engineering',
+  'Health and nursing', 'Law, compliance and public service', 'Science',
+  'Social and behavioral sciences', 'Technology',
+];
+
+function fullFlowTests(degreeType, idPrefix) {
+  return INTEREST_AREAS.map(interest => ({
+    id: `${idPrefix}-${interest.toLowerCase().replace(/[^a-z]/g, '').substring(0, 8)}`,
+    name: `${degreeType} — ${interest}`,
+    command: `npx playwright test quiz-full-flow --project=chromium -g "Full flow — ${degreeType} — ${interest}"`,
+  }));
+}
+
 const groups = [
   {
     id: 'full-flow',
     name: 'Full Flow',
     description: 'Complete quiz journey with real selections at every step (no skips)',
     tests: [
-      { id: 'full-flow-undergrad-arts', name: 'Undergraduate — Arts, culture and society', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Arts"' },
-      { id: 'full-flow-undergrad-business', name: 'Undergraduate — Business', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Business"' },
-      { id: 'full-flow-undergrad-education', name: 'Undergraduate — Education', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Education"' },
-      { id: 'full-flow-undergrad-engineering', name: 'Undergraduate — Engineering', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Engineering"' },
-      { id: 'full-flow-undergrad-health', name: 'Undergraduate — Health and nursing', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Health"' },
-      { id: 'full-flow-undergrad-law', name: 'Undergraduate — Law, compliance and public service', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Law"' },
-      { id: 'full-flow-undergrad-science', name: 'Undergraduate — Science', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Science"' },
-      { id: 'full-flow-undergrad-social', name: 'Undergraduate — Social and behavioral sciences', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Social"' },
-      { id: 'full-flow-undergrad-tech', name: 'Undergraduate — Technology', command: 'npx playwright test quiz-full-flow --project=chromium -g "Undergraduate.*Technology"' },
-      { id: 'full-flow-grad-arts', name: 'Graduate — Arts, culture and society', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Arts"' },
-      { id: 'full-flow-grad-business', name: 'Graduate — Business', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Business"' },
-      { id: 'full-flow-grad-education', name: 'Graduate — Education', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Education"' },
-      { id: 'full-flow-grad-engineering', name: 'Graduate — Engineering', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Engineering"' },
-      { id: 'full-flow-grad-health', name: 'Graduate — Health and nursing', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Health"' },
-      { id: 'full-flow-grad-law', name: 'Graduate — Law, compliance and public service', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Law"' },
-      { id: 'full-flow-grad-science', name: 'Graduate — Science', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Science"' },
-      { id: 'full-flow-grad-social', name: 'Graduate — Social and behavioral sciences', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Social"' },
-      { id: 'full-flow-grad-tech', name: 'Graduate — Technology', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate degree.*Technology"' },
-      { id: 'full-flow-cert-arts', name: 'Certificate — Arts, culture and society', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Arts"' },
-      { id: 'full-flow-cert-business', name: 'Certificate — Business', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Business"' },
-      { id: 'full-flow-cert-education', name: 'Certificate — Education', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Education"' },
-      { id: 'full-flow-cert-engineering', name: 'Certificate — Engineering', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Engineering"' },
-      { id: 'full-flow-cert-health', name: 'Certificate — Health and nursing', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Health"' },
-      { id: 'full-flow-cert-law', name: 'Certificate — Law, compliance and public service', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Law"' },
-      { id: 'full-flow-cert-science', name: 'Certificate — Science', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Science"' },
-      { id: 'full-flow-cert-social', name: 'Certificate — Social and behavioral sciences', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Social"' },
-      { id: 'full-flow-cert-tech', name: 'Certificate — Technology', command: 'npx playwright test quiz-full-flow --project=chromium -g "Graduate certificate.*Technology"' },
+      ...fullFlowTests('Undergraduate degree', 'ff-ug'),
+      ...fullFlowTests('Graduate degree', 'ff-gr'),
+      ...fullFlowTests('Graduate certificate', 'ff-ct'),
     ],
     runAllCommand: 'npx playwright test quiz-full-flow --project=chromium',
     reportJson: 'full-flow-test-results.json',
@@ -45,9 +35,9 @@ const groups = [
     name: 'RFI Submission',
     description: 'Full quiz flow + UNDECIDED RFI submission via Request Info button',
     tests: [
-      { id: 'rfi-undergrad', name: 'Undergraduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Undergraduate"' },
-      { id: 'rfi-grad', name: 'Graduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Graduate degree"' },
-      { id: 'rfi-cert', name: 'Certificate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Graduate certificate"' },
+      { id: 'rfi-undergrad', name: 'Undergraduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI — Undergraduate degree"' },
+      { id: 'rfi-grad', name: 'Graduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI — Graduate degree"' },
+      { id: 'rfi-cert', name: 'Certificate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI — Graduate certificate"' },
     ],
     runAllCommand: 'npx playwright test quiz-full-flow-withRFI --project=chromium',
     reportJson: 'rfi-test-results.json',
