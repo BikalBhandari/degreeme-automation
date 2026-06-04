@@ -60,6 +60,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .run-btn{background:var(--maroon);color:var(--white)}
 .run-btn:hover{opacity:0.85}
 .run-btn:disabled{opacity:0.5;cursor:not-allowed}
+.stop-btn{background:var(--orange);color:var(--white)}
+.stop-btn:hover{opacity:0.85}
 .report-link{color:var(--blue);text-decoration:none;font-size:0.75rem;font-weight:500;margin-right:var(--space-sm)}
 .report-link:hover{text-decoration:underline}
 .duration-text{font-size:0.8rem;color:var(--gray-600)}
@@ -175,8 +177,12 @@ function renderStatus(state) {
 }
 
 function renderActions(testId, state, group) {
-  const runDisabled = state.status === 'running' ? 'disabled' : '';
-  let html = `<button class="action-btn run-btn" ${runDisabled} onclick="runTest('${testId}')">Run</button>`;
+  let html = '';
+  if (state.status === 'running') {
+    html += `<button class="action-btn stop-btn" onclick="stopTest('${testId}')">Stop</button>`;
+  } else {
+    html += `<button class="action-btn run-btn" onclick="runTest('${testId}')">Run</button>`;
+  }
   if (state.status === 'pass' || state.status === 'fail') {
     if (group.reportHtml) {
       const reportType = group.id.startsWith('results-') ? group.id : group.id === 'rfi' ? 'rfi' : 'full-flow';
@@ -240,6 +246,16 @@ async function runCurrentGroup() {
   }
   btn.disabled = false;
   btn.textContent = `Run All (${group.tests.length})`;
+}
+
+async function stopTest(testId) {
+  await fetch('/api/stop-test', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ testId })
+  });
+  testStates[testId] = { status: 'idle', duration: '' };
+  updateRow(testId);
 }
 
 function openPlaywrightReport() {

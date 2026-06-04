@@ -16,6 +16,9 @@ const PROJECT_ROOT = path.join(__dirname, '..', '..');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Track running processes
+const runningProcesses = {};
+
 // GET /api/tests — return groups with last run status
 app.get('/api/tests', (req, res) => {
   const result = groups.map(group => {
@@ -49,11 +52,13 @@ app.post('/api/run-test', (req, res) => {
   }
 
   const start = Date.now();
-  exec(testConfig.command, { cwd: PROJECT_ROOT, timeout: 300000 }, (error, stdout, stderr) => {
+  const child = exec(testConfig.command, { cwd: PROJECT_ROOT, timeout: 300000 }, (error, stdout, stderr) => {
+    delete runningProcesses[testId];
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     const pass = !error;
     res.json({ testId, pass, duration, output: pass ? stdout : stderr || stdout });
   });
+  runningProcesses[testId] = child;
 });
 
 // POST /api/run-group — run all tests in a group
@@ -69,11 +74,24 @@ app.post('/api/run-group', (req, res) => {
   }
 
   const start = Date.now();
-  exec(group.runAllCommand, { cwd: PROJECT_ROOT, timeout: 600000 }, (error, stdout, stderr) => {
+  const child = exec(group.runAllCommand, { cwd: PROJECT_ROOT, timeout: 600000 }, (error, stdout, stderr) => {
+    delete runningProcesses[`group-${groupId}`];
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     const pass = !error;
     res.json({ groupId, pass, duration, output: pass ? stdout : stderr || stdout });
   });
+  runningProcesses[`group-${groupId}`] = child;
+});
+
+// POST /api/stop-test — kill a running test
+app.post('/api/stop-test', (req, res) => {
+  const { testId } = req.body;
+  const key = testId.startsWith('group-') ? testId : testId;
+  const child = runningProcesses[key];
+  if (!child) return res.json({ ok: false, message: 'No running process found' });
+  child.kill('SIGTERM');
+  delete runningProcesses[key];
+  res.json({ ok: true });
 });
 
 // GET /api/reports/playwright — open Playwright report
