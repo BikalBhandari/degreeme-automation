@@ -68,8 +68,12 @@ app.post('/api/run-test', (req, res) => {
     fs.writeFileSync(jsonPath, JSON.stringify({ timestamp: new Date().toISOString(), env: currentEnv, results: [] }));
   }
 
+  // Append group-specific reporter dir
+  const reporterFlag = parentGroup.playwrightReportDir ? ` --reporter=html:./${parentGroup.playwrightReportDir}` : '';
+  const command = testConfig.command + reporterFlag;
+
   const start = Date.now();
-  const child = exec(testConfig.command, { cwd: PROJECT_ROOT, timeout: 300000, env: { ...process.env, ENV: currentEnv } }, (error, stdout, stderr) => {
+  const child = exec(command, { cwd: PROJECT_ROOT, timeout: 300000, env: { ...process.env, ENV: currentEnv } }, (error, stdout, stderr) => {
     delete runningProcesses[testId];
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     const pass = !error;
@@ -90,8 +94,12 @@ app.post('/api/run-group', (req, res) => {
     fs.writeFileSync(jsonPath, JSON.stringify({ timestamp: new Date().toISOString(), env: currentEnv, results: [] }));
   }
 
+  // Append group-specific reporter dir
+  const reporterFlag = group.playwrightReportDir ? ` --reporter=html:./${group.playwrightReportDir}` : '';
+  const command = group.runAllCommand + reporterFlag;
+
   const start = Date.now();
-  const child = exec(group.runAllCommand, { cwd: PROJECT_ROOT, timeout: 600000, env: { ...process.env, ENV: currentEnv } }, (error, stdout, stderr) => {
+  const child = exec(command, { cwd: PROJECT_ROOT, timeout: 600000, env: { ...process.env, ENV: currentEnv } }, (error, stdout, stderr) => {
     delete runningProcesses[`group-${groupId}`];
     const duration = ((Date.now() - start) / 1000).toFixed(1);
     const pass = !error;
@@ -111,11 +119,20 @@ app.post('/api/stop-test', (req, res) => {
   res.json({ ok: true });
 });
 
-// GET /api/reports/playwright — open Playwright report
+// GET /api/reports/playwright/:groupId — open group-specific Playwright report
+app.get('/api/reports/playwright/:groupId', (req, res) => {
+  const group = groups.find(g => g.id === req.params.groupId);
+  const reportDir = group?.playwrightReportDir || 'playwright-report';
+  const { spawn } = require('child_process');
+  spawn('npx', ['playwright', 'show-report', reportDir], { cwd: PROJECT_ROOT, detached: true, stdio: 'ignore' }).unref();
+  res.json({ ok: true });
+});
+
+// Legacy: open default report
 app.get('/api/reports/playwright', (req, res) => {
   const { spawn } = require('child_process');
   spawn('npx', ['playwright', 'show-report'], { cwd: PROJECT_ROOT, detached: true, stdio: 'ignore' }).unref();
-  res.json({ ok: true, message: 'Playwright report opening on port 9323' });
+  res.json({ ok: true });
 });
 
 // GET /api/reports/stakeholder/:type — regenerate and serve custom HTML report
