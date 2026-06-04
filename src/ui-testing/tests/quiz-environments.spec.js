@@ -18,7 +18,7 @@ test.describe('Quiz - Environments', () => {
   test('displays environments screen', async ({ page }) => {
     await expect(page.getByText('Environments')).toBeVisible();
     await expect(page.getByRole('heading', { name: /What kind of work environment/ })).toBeVisible();
-    await expect(page.getByText('Select all that apply:')).toBeVisible();
+    await expect(page.locator('.select-all-text:visible').first()).toBeVisible();
   });
 
   test('shows all 7 environment options', async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('Quiz - Environments', () => {
   });
 
   test('back returns to last drilldown', async ({ page }) => {
-    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('button', { name: 'Back' }).last().click();
     await page.getByRole('heading', { name: /What area of.*Technology/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

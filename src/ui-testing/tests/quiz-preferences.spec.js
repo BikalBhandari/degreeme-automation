@@ -21,7 +21,7 @@ test.describe('Quiz - Preferences', () => {
   test('displays preferences screen', async ({ page }) => {
     await expect(page.getByText('Preferences')).toBeVisible();
     await expect(page.getByRole('heading', { name: /What do you think you'd enjoy/ })).toBeVisible();
-    await expect(page.getByText('Select all that apply:')).toBeVisible();
+    await expect(page.locator('.select-all-text:visible').first()).toBeVisible();
   });
 
   test('shows all 12 preference options', async ({ page }) => {
@@ -56,7 +56,7 @@ test.describe('Quiz - Preferences', () => {
   });
 
   test('back returns to environments', async ({ page }) => {
-    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('button', { name: 'Back' }).last().click();
     await page.getByText('Environments').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

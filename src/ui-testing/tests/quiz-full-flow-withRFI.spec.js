@@ -20,10 +20,10 @@ const RFI_PATHS = [
   FULL_PATHS.find(p => p.degreeType === 'Graduate certificate'),
 ];
 
-// Initialize results file at start
-test.beforeAll(() => {
+// Initialize results file if it doesn't exist
+if (!fs.existsSync(RESULTS_FILE)) {
   fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
-});
+}
 
 function appendResult(result) {
   try {

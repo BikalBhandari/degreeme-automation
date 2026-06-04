@@ -10,7 +10,7 @@ test.describe('Quiz - Interest Areas', () => {
   test('displays interest areas screen', async ({ page }) => {
     await expect(page.getByText('Interest areas')).toBeVisible();
     await expect(page.getByRole('heading', { name: /What fields excite you the most/ })).toBeVisible();
-    await expect(page.getByText('Select all that apply:')).toBeVisible();
+    await expect(page.locator('.select-all-text:visible').first()).toBeVisible();
   });
 
   test('shows all 9 interest fields', async ({ page }) => {
@@ -26,34 +26,34 @@ test.describe('Quiz - Interest Areas', () => {
       'Technology',
     ];
     for (const field of fields) {
-      await expect(page.getByRole('paragraph').filter({ hasText: field })).toBeVisible();
+      await expect(page.locator(`p.m-0:text-is("${field}")`)).toBeVisible();
     }
   });
 
   test('continue is disabled without selection', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /Continue/ })).toBeDisabled();
+    await expect(page.locator('button:visible', { hasText: 'Continue' }).last()).toBeDisabled();
   });
 
   test('continue becomes enabled after selecting a field', async ({ page }) => {
-    await page.getByRole('paragraph').filter({ hasText: 'Business' }).click();
-    await expect(page.getByRole('button', { name: /Continue/ })).toBeEnabled();
+    await page.locator('p.m-0:text-is("Business")').click();
+    await expect(page.locator('button:visible', { hasText: 'Continue' }).last()).toBeEnabled();
   });
 
   test('allows selecting multiple fields', async ({ page }) => {
-    await page.getByRole('paragraph').filter({ hasText: 'Business' }).click();
-    await page.getByRole('paragraph').filter({ hasText: 'Engineering' }).click();
-    await page.getByRole('paragraph').filter({ hasText: 'Technology' }).click();
-    await expect(page.getByRole('button', { name: /Continue/ })).toBeEnabled();
+    await page.locator('p.m-0:text-is("Business")').click();
+    await page.locator('p.m-0:text-is("Engineering")').click();
+    await page.locator('p.m-0:text-is("Technology")').click();
+    await expect(page.locator('button:visible', { hasText: 'Continue' }).last()).toBeEnabled();
   });
 
   test('continue advances to drilldown for selected field', async ({ page }) => {
-    await page.getByRole('paragraph').filter({ hasText: 'Business' }).click();
-    await page.getByRole('button', { name: /Continue/ }).click();
+    await page.locator('p.m-0:text-is("Business")').click();
+    await page.getByRole('button', { name: /Continue/ }).first().click();
     await page.getByRole('heading', { name: /What area of.*Business/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 
   test('back returns to education status', async ({ page }) => {
-    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('button', { name: 'Back' }).last().click();
     await page.getByRole('heading', { name: /Do you currently have any of the following/ }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   });
 });

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DegreeMe Test Dashboard</title>
+<style>
+:root{--maroon:#8C1D40;--gold:#FFC627;--green:#78BE20;--orange:#FF7F32;--blue:#00A3E0;--white:#FFFFFF;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-600:#4b5563;--gray-900:#111827}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--gray-100);color:var(--gray-900)}
+.header{background:var(--maroon);color:var(--white);padding:1.5rem 2rem;display:flex;align-items:center;gap:1rem}
+.header h1{font-size:1.4rem;font-weight:700}
+.header .subtitle{font-size:0.85rem;opacity:0.8}
+.container{max-width:1200px;margin:0 auto;padding:1.5rem}
+.group{margin-bottom:2rem}
+.group-header{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;background:var(--white);border-radius:8px 8px 0 0;border:1px solid var(--gray-200);border-bottom:2px solid var(--maroon)}
+.group-header h2{font-size:1.1rem;color:var(--maroon)}
+.group-header p{font-size:0.8rem;color:var(--gray-600);margin-top:0.2rem}
+.group-header .run-all-btn{background:var(--maroon);color:var(--white);border:none;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;transition:opacity 0.2s}
+.group-header .run-all-btn:hover{opacity:0.85}
+.group-header .run-all-btn:disabled{opacity:0.5;cursor:not-allowed}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:0.75rem;padding:1rem;background:var(--gray-50);border:1px solid var(--gray-200);border-top:none;border-radius:0 0 8px 8px}
+.card{background:var(--white);border:1px solid var(--gray-200);border-radius:8px;padding:1rem;display:flex;flex-direction:column;gap:0.5rem;transition:border-color 0.2s}
+.card.pass{border-left:4px solid var(--green)}
+.card.fail{border-left:4px solid var(--orange)}
+.card.running{border-left:4px solid var(--gold)}
+.card-name{font-weight:600;font-size:0.9rem}
+.card-status{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--gray-600)}
+.card-status .badge{padding:0.15rem 0.5rem;border-radius:4px;font-weight:600;font-size:0.75rem}
+.badge.pass{background:#dcfce7;color:#166534}
+.badge.fail{background:#fee2e2;color:#991b1b}
+.badge.running{background:#fef3c7;color:#92400e}
+.badge.idle{background:var(--gray-100);color:var(--gray-600)}
+.card-actions{display:flex;gap:0.5rem;margin-top:auto;padding-top:0.5rem}
+.card-actions button,.card-actions a{font-size:0.75rem;padding:0.35rem 0.7rem;border-radius:4px;border:none;cursor:pointer;text-decoration:none;font-weight:500;transition:opacity 0.2s}
+.run-btn{background:var(--maroon);color:var(--white)}
+.run-btn:hover{opacity:0.85}
+.run-btn:disabled{opacity:0.5;cursor:not-allowed}
+.report-btn{background:var(--blue);color:var(--white);display:none}
+.report-btn.visible{display:inline-block}
+.report-btn:hover{opacity:0.85}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--gold);border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.duration{font-size:0.75rem;color:var(--gray-600)}
+</style>
+</head>
+<body>
+<div class="header">
+<div>
+<h1>🎓 DegreeMe Test Dashboard</h1>
+<p class="subtitle">ASU Online — Test Automation Suite</p>
+</div>
+</div>
+<div class="container" id="app"></div>
+<script>
+const app = document.getElementById('app');
+let groupsData = [];
+
+async function loadTests() {
+  const res = await fetch('/api/tests');
+  groupsData = await res.json();
+  render();
+}
+
+function getTestStatus(group, testId) {
+  if (!group.lastResults || !group.lastResults.results) return null;
+  const r = group.lastResults.results.find(r =>
+    r.degreeType && testId.includes(r.degreeType.toLowerCase().replace(/\s+/g, '-').substring(0, 8))
+  );
+  return r || null;
+}
+
+function render() {
+  app.innerHTML = groupsData.map(group => `
+    <div class="group" data-group-id="${group.id}">
+      <div class="group-header">
+        <div>
+          <h2>${group.name}</h2>
+          <p>${group.description}</p>
+        </div>
+        <button class="run-all-btn" onclick="runGroup('${group.id}')">Run All (${group.tests.length})</button>
+      </div>
+      <div class="cards">
+        ${group.tests.map(test => `
+          <div class="card" id="card-${test.id}">
+            <div class="card-name">${test.name}</div>
+            <div class="card-status">
+              <span class="badge idle">Idle</span>
+            </div>
+            <div class="card-actions">
+              <button class="run-btn" onclick="runTest('${test.id}','${group.id}')">Run</button>
+              ${group.reportHtml ? `<a class="report-btn" href="/api/reports/stakeholder/${group.id === 'rfi' ? 'rfi' : 'full-flow'}" target="_blank">Stakeholder Report</a>` : ''}
+              <a class="report-btn" href="#" onclick="openPlaywrightReport();return false;">Playwright Report</a>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function setCardState(testId, state, duration) {
+  const card = document.getElementById('card-' + testId);
+  if (!card) return;
+  card.className = 'card ' + state;
+  const status = card.querySelector('.card-status');
+  const reports = card.querySelectorAll('.report-btn');
+  if (state === 'running') {
+    status.innerHTML = '<span class="spinner"></span><span>Running...</span>';
+    card.querySelector('.run-btn').disabled = true;
+  } else if (state === 'pass') {
+    status.innerHTML = `<span class="badge pass">PASS</span><span class="duration">${duration}s</span>`;
+    card.querySelector('.run-btn').disabled = false;
+    reports.forEach(r => r.classList.add('visible'));
+  } else if (state === 'fail') {
+    status.innerHTML = `<span class="badge fail">FAIL</span><span class="duration">${duration}s</span>`;
+    card.querySelector('.run-btn').disabled = false;
+    reports.forEach(r => r.classList.add('visible'));
+  }
+}
+
+async function runTest(testId, groupId) {
+  setCardState(testId, 'running');
+  try {
+    const res = await fetch('/api/run-test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ testId })
+    });
+    const data = await res.json();
+    setCardState(testId, data.pass ? 'pass' : 'fail', data.duration);
+  } catch (e) {
+    setCardState(testId, 'fail', '0');
+  }
+}
+
+async function runGroup(groupId) {
+  const group = groupsData.find(g => g.id === groupId);
+  if (!group) return;
+  const btn = document.querySelector(`[data-group-id="${groupId}"] .run-all-btn`);
+  btn.disabled = true;
+  btn.textContent = 'Running...';
+  group.tests.forEach(t => setCardState(t.id, 'running'));
+  try {
+    const res = await fetch('/api/run-group', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ groupId })
+    });
+    const data = await res.json();
+    group.tests.forEach(t => setCardState(t.id, data.pass ? 'pass' : 'fail', data.duration));
+  } catch (e) {
+    group.tests.forEach(t => setCardState(t.id, 'fail', '0'));
+  }
+  btn.disabled = false;
+  btn.textContent = `Run All (${group.tests.length})`;
+}
+
+function openPlaywrightReport() {
+  fetch('/api/reports/playwright').then(() => {
+    setTimeout(() => window.open('http://localhost:9323', '_blank'), 1500);
+  });
+}
+
+loadTests();
+</script>
+</body>
+</html>
