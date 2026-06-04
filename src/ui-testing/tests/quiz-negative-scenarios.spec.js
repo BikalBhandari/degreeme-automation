@@ -38,14 +38,17 @@ test.describe('Negative Scenarios — AI & Network Failures', () => {
   test.setTimeout(180000);
 
   test('AI timeout shows error/retry message', async ({ page }) => {
-    // Intercept quiz-session from the start — app may prefetch
-    let requestIntercepted = false;
+    await navigateToGenerateResults(page);
+
+    // Intercept only POST to quiz-session (the results generation call)
     await page.route(QUIZ_SESSION_URL, route => {
-      requestIntercepted = true;
-      // Never respond — simulates timeout
+      if (route.request().method() === 'POST') {
+        // Never respond — simulates timeout
+        return;
+      }
+      route.continue();
     });
 
-    await navigateToGenerateResults(page);
     await page.getByRole('button', { name: 'Skip to results' }).first().click();
 
     // Should show animation initially
@@ -59,12 +62,17 @@ test.describe('Negative Scenarios — AI & Network Failures', () => {
   });
 
   test('Network failure shows error/retry message', async ({ page }) => {
-    // Intercept quiz-session from the start
+    await navigateToGenerateResults(page);
+
+    // Intercept only POST to quiz-session and abort
     await page.route(QUIZ_SESSION_URL, route => {
-      route.abort('failed');
+      if (route.request().method() === 'POST') {
+        route.abort('failed');
+        return;
+      }
+      route.continue();
     });
 
-    await navigateToGenerateResults(page);
     await page.getByRole('button', { name: 'Skip to results' }).first().click();
 
     // Should show an error message
