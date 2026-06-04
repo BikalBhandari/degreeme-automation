@@ -75,7 +75,7 @@ ${['Undergraduate degree', 'Graduate degree', 'Graduate certificate'].map(dt => 
     if (!group.length) return '';
     const gp = group.filter(r => r.pass).length;
     return `<div class="section-title">${dt} (${gp}/${group.length} passed)</div>
-${group.map(r => `<details>
+${group.map(r => `<details open>
 <summary>
 <span class="icon ${r.pass ? 'pass' : 'fail'}">${r.pass ? '✓' : '✗'}</span>
 <span class="test-name">${r.interest}</span>
