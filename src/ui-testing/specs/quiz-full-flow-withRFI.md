@@ -26,7 +26,7 @@ This test runs 3 paths — one per degree type (Undergraduate, Graduate, Certifi
 12. Assert "Connect with us" modal appears
 13. Fill first name (`embtest` + random name)
 14. Fill last name (`embtest` + random name)
-15. Fill email (`edplusqatest+degreemeautomation{timestamp}@gmail.com`)
+15. Fill email (`edplusqatest+degreemeaut{timestamp}@gmail.com`)
 16. Select US country code, fill phone number (valid 10-digit)
 17. Select military status radio (alternates Yes/No per path)
 18. Assert Submit button is enabled

@@ -196,31 +196,6 @@ const PATHS = DEGREE_TYPES.flatMap((degreeType) =>
   }))
 );
 
-const ENVIRONMENTS = [
-  'Fast-paced',
-  'Team-oriented',
-  'Independent and research-driven',
-  'Creative and flexible',
-  'Tech-focused and data-driven',
-  'Hands-on',
-  'Mission and community-driven',
-];
-
-const PREFERENCES = [
-  'Designing or managing projects',
-  'Solving complex problems with data',
-  'Collaborating with others',
-  'Working with diverse communities',
-  'Teaching or mentoring others',
-  'Working at the intersection of tech and people',
-  'Exploring global or political systems',
-  'Helping others in crisis or recovery situations',
-  'Improving education through new technology',
-  'Designing sustainable or nature-inspired solutions',
-  'Managing nonprofit or mission-driven organizations',
-  'Communicating complex ideas across diverse audiences',
-];
-
 /**
  * Full end-to-end paths: no skips, real selections at every step.
  * Used by quiz-full-flow.spec.js.
@@ -480,9 +455,6 @@ module.exports = {
   EDUCATION_STATUS_OPTIONS,
   INTEREST_AREAS,
   SUB_INTERESTS,
-  ENVIRONMENTS,
-  PREFERENCES,
   PATHS,
   FULL_PATHS,
-  keywordsFromSubInterests,
 };

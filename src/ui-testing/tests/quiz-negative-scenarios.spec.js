@@ -1,6 +1,6 @@
 // Spec: src/ui-testing/specs/quiz-negative-scenarios.md
 const { test, expect } = require('@playwright/test');
-const { startQuiz, navigateToInterestAreas, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
+const { navigateToInterestAreas, TRANSITION_TIMEOUT } = require('./helpers/quiz-navigation');
 
 const QUIZ_SERVICE_URL = '**/nonprod-degree-me-service*';
 

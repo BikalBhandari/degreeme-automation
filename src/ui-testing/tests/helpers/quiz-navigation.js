@@ -12,10 +12,6 @@ async function startQuiz(page) {
   await page.getByRole('heading', { name: 'What are you interested in pursuing?' }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
 }
 
-async function navigateToDegreeType(page) {
-  await startQuiz(page);
-}
-
 async function navigateToEducationStatus(page, degreeType = 'Undergraduate degree') {
   await startQuiz(page);
   await page.getByText(degreeType).click();
@@ -48,7 +44,6 @@ async function navigateToInterestDrilldown(page, fields = ['Business'], options 
 module.exports = {
   TRANSITION_TIMEOUT,
   startQuiz,
-  navigateToDegreeType,
   navigateToEducationStatus,
   navigateToInterestAreas,
   navigateToInterestDrilldown,

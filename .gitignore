@@ -18,6 +18,7 @@ rfi-test-results.json
 results-undergraduate-test-results.json
 results-graduate-test-results.json
 results-certificate-test-results.json
+program-card-rfi-test-results.json
 
 # Environment files (contain URLs, could contain secrets)
 .env

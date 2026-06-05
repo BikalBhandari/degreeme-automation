@@ -95,7 +95,7 @@ function generateRfiData(index = 0) {
   return {
     firstName: `embtest${randomFrom(FIRST_NAMES)}`,
     lastName: `embtest${randomFrom(LAST_NAMES)}`,
-    email: `edplusqatest+degreemeautomation${timestamp}@gmail.com`,
+    email: `edplusqatest+degreemeauto${timestamp}@gmail.com`,
     phone: generatePhone(),
     military: index % 2 === 0 ? 'No' : 'Yes',
   };
