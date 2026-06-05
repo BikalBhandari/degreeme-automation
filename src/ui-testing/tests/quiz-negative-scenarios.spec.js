@@ -84,7 +84,7 @@ test.describe('Negative Scenarios — BritVerify Rejection', () => {
 
     await page.locator('#first-name').fill('embtestNegative');
     await page.locator('#last-name').fill('embtestScenario');
-    await page.locator('#email').fill('fakeinvalid@notreal.xyz');
+    await page.locator('#email').fill('fakeinvalid-notreal');
     await page.locator('#asuonline_phone_number_id').fill('6025551234');
     await page.locator('#military-false').click();
 
@@ -162,24 +162,28 @@ test.describe('Negative Scenarios — RFI Form Validation', () => {
     await expect(submitBtn(page)).toBeDisabled();
   });
 
-  test('Submit disabled: Invalid email format', async ({ page }) => {
+  test('Submit rejected: Invalid email format', async ({ page }) => {
     await navigateToRfiModal(page);
     await page.locator('#first-name').fill('embtestNegative');
     await page.locator('#last-name').fill('embtestScenario');
-    await page.locator('#email').fill('test@invalid');
+    await page.locator('#email').fill('fakeinvalid-notreal');
     await page.locator('#asuonline_phone_number_id').fill('6025551234');
     await page.locator('#military-false').click();
-    await expect(submitBtn(page)).toBeDisabled();
+    await submitBtn(page).click();
+    const error = page.locator('text=/valid email|invalid email|enter a valid/i');
+    await expect(error.first()).toBeVisible({ timeout: 15000 });
   });
 
-  test('Submit disabled: Invalid phone format', async ({ page }) => {
+  test('Submit rejected: Invalid phone format', async ({ page }) => {
     await navigateToRfiModal(page);
     await page.locator('#first-name').fill('embtestNegative');
     await page.locator('#last-name').fill('embtestScenario');
     await page.locator('#email').fill('edplusqatest+neg@gmail.com');
     await page.locator('#asuonline_phone_number_id').fill('123');
     await page.locator('#military-false').click();
-    await expect(submitBtn(page)).toBeDisabled();
+    await submitBtn(page).click();
+    const error = page.locator('text=/valid phone|invalid phone|enter a valid/i');
+    await expect(error.first()).toBeVisible({ timeout: 15000 });
   });
 
   test('Submit disabled: Military not selected', async ({ page }) => {

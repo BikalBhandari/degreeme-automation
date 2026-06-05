@@ -12,10 +12,8 @@ const ANIMATION_MESSAGES = [
 
 const RESULTS_FILE = nodePath.join(__dirname, '..', '..', '..', 'full-flow-test-results.json');
 
-// Initialize results file if it doesn't exist
-if (!fs.existsSync(RESULTS_FILE)) {
-  fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
-}
+// Reset results file at the start of each run
+fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
 
 function appendResult(result) {
   try {

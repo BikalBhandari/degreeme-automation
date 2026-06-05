@@ -7,9 +7,8 @@ const path = require('path');
 const RESULTS_FILE = path.join(__dirname, '..', '..', '..', 'results-graduate-test-results.json');
 const graduatePaths = PATHS.filter((p) => p.degreeType === 'Graduate degree');
 
-if (!fs.existsSync(RESULTS_FILE)) {
-  fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
-}
+// Reset results file at the start of each run
+fs.writeFileSync(RESULTS_FILE, JSON.stringify({ timestamp: new Date().toISOString(), results: [] }));
 
 function appendResult(result) {
   try {
