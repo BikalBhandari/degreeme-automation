@@ -115,13 +115,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <thead>
 <tr>
 <th>Test Name</th>
-<th>Status</th>
+<th>Test Runner</th>
 <th>Duration</th>
-<th>Actions</th>
+<th>Status</th>
+<th>Reports</th>
 </tr>
 </thead>
 <tbody id="grid-body">
-<tr><td colspan="4" style="text-align:center;color:var(--gray-600);padding:3rem">Select a test group from the left panel</td></tr>
+<tr><td colspan="5" style="text-align:center;color:var(--gray-600);padding:3rem">Select a test group from the left panel</td></tr>
 </tbody>
 </table>
 </div>
@@ -197,9 +198,10 @@ function renderGrid(group) {
     const state = testStates[t.id] || { status: 'idle', duration: '' };
     return `<tr id="row-${t.id}">
       <td class="test-name-cell" title="${t.name}">${t.name}</td>
-      <td>${renderStatus(state)}</td>
+      <td class="actions-cell">${renderRunner(t.id, state)}</td>
       <td class="duration-text">${state.duration ? state.duration + 's' : '—'}</td>
-      <td class="actions-cell">${renderActions(t.id, state, group)}</td>
+      <td>${renderStatus(state)}</td>
+      <td class="actions-cell">${renderReports(t.id, state, group)}</td>
     </tr>`;
   }).join('');
 }
@@ -211,20 +213,21 @@ function renderStatus(state) {
   return '<span class="status-badge idle">Idle</span>';
 }
 
-function renderActions(testId, state, group) {
-  let html = '';
+function renderRunner(testId, state) {
   if (state.status === 'running') {
-    html += `<button class="action-btn stop-btn" onclick="stopTest('${testId}')">Stop</button>`;
-  } else {
-    html += `<button class="action-btn run-btn" onclick="runTest('${testId}')">Run</button>`;
+    return `<button class="action-btn stop-btn" onclick="stopTest('${testId}')">Stop</button>`;
   }
-  if (state.status === 'pass' || state.status === 'fail') {
-    if (group.reportHtml) {
-      const reportType = group.id.startsWith('results-') ? group.id : group.id === 'rfi' ? 'rfi' : 'full-flow';
-      html += `<a class="report-link" href="/api/reports/stakeholder/${reportType}" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Stakeholder</a>`;
-    }
-    html += `<a class="report-link" href="#" onclick="openPlaywrightReport();return false;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Playwright</a>`;
+  return `<button class="action-btn run-btn" onclick="runTest('${testId}')">Run</button>`;
+}
+
+function renderReports(testId, state, group) {
+  if (state.status !== 'pass' && state.status !== 'fail') return '<span class="no-reports">—</span>';
+  let html = '';
+  if (group.reportHtml) {
+    const reportType = group.id.startsWith('results-') ? group.id : group.id === 'rfi' ? 'rfi' : 'full-flow';
+    html += `<a class="report-link" href="/api/reports/stakeholder/${reportType}" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Stakeholder</a>`;
   }
+  html += `<a class="report-link" href="#" onclick="openPlaywrightReport();return false;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Playwright</a>`;
   return html;
 }
 
@@ -238,9 +241,10 @@ function updateRow(testId) {
   if (!row) return;
   row.innerHTML = `
     <td class="test-name-cell" title="${t.name}">${t.name}</td>
-    <td>${renderStatus(state)}</td>
+    <td class="actions-cell">${renderRunner(testId, state)}</td>
     <td class="duration-text">${state.duration ? state.duration + 's' : '—'}</td>
-    <td class="actions-cell">${renderActions(testId, state, group)}</td>
+    <td>${renderStatus(state)}</td>
+    <td class="actions-cell">${renderReports(testId, state, group)}</td>
   `;
 }
 

@@ -106,8 +106,8 @@ const groups = [
     name: 'Program Card RFI (E2E)',
     description: 'Page-level RFI + program-specific RFI from expanded cards. ~4 min total | ~60s per card',
     tests: [
-      { id: 'pcrfi-first', name: 'Page-level + First Card RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "first card"' },
-      { id: 'pcrfi-all', name: 'Page-level + All 5 Cards RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "all 5 cards"' },
+      { id: 'pcrfi-first', name: 'First Card RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "First card"' },
+      { id: 'pcrfi-all', name: 'All 5 Cards RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "All 5 cards"' },
     ],
     runAllCommand: 'npx playwright test quiz-program-card-rfi --project=chromium',
   },

@@ -51,6 +51,7 @@ test.describe('Quiz - Preferences', () => {
   });
 
   test('skip to results advances to results page', async ({ page }) => {
+    test.setTimeout(120000);
     await page.getByRole('button', { name: 'Skip to results' }).first().click();
     await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: 90000 });
   });

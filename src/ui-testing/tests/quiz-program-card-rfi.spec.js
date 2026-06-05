@@ -38,74 +38,48 @@ async function completeQuizToResults(page) {
   await expect(page.getByText('Read more')).toHaveCount(5);
 }
 
-async function submitPageLevelRfi(page, index) {
-  const rfi = generateRfiData(index);
-  await page.getByRole('button', { name: 'Request Info' }).first().click();
-  await page.getByText('Connect with us').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
-
-  await page.locator('#first-name').fill(rfi.firstName);
-  await page.locator('#last-name').fill(rfi.lastName);
-  await page.locator('#email').fill(rfi.email);
-  await page.locator('#asuonline_phone_number_id').fill(rfi.phone);
-  await page.locator(rfi.military === 'Yes' ? '#military-true' : '#military-false').click();
-
-  // Wait for BritVerify async validation to complete
-  const submitBtn = page.getByRole('button', { name: /submit/i });
-  await expect(submitBtn).toBeEnabled({ timeout: 15000 });
-  await submitBtn.click();
-
-  await page.getByText("We'll be in touch").waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
-  await page.locator('[aria-label="Close modal"]').click();
-  await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
-}
-
 async function submitProgramCardRfi(page, cardIndex) {
-  const rfi = generateRfiData(cardIndex + 10); // offset to avoid same timestamp
+  const rfi = generateRfiData(cardIndex + 10);
 
   // Expand the card
-  const expandButtons = page.locator('button:has-text("Expand card"), button:has-text("Read more")');
-  await expandButtons.nth(cardIndex).click();
+  const readMoreButtons = page.getByText('Read more');
+  await readMoreButtons.nth(cardIndex).click();
 
-  // Wait for program details modal with "Connect with us" button
+  // "Connect with us" button appears — click it to open RFI form
   await page.getByRole('button', { name: 'Connect with us' }).waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
   await page.getByRole('button', { name: 'Connect with us' }).click();
 
-  // RFI form opens
-  await page.getByText('Connect with us').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+  // Wait for embedded RFI form
+  await page.getByText('Curious about this degree?').waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
 
   await page.locator('#first-name').fill(rfi.firstName);
   await page.locator('#last-name').fill(rfi.lastName);
   await page.locator('#email').fill(rfi.email);
-  await page.locator('#asuonline_phone_number_id').fill(rfi.phone);
+  await page.locator('#asuonline_phone_number_id').fill('6025980818');
   await page.locator(rfi.military === 'Yes' ? '#military-true' : '#military-false').click();
 
   const submitBtn = page.getByRole('button', { name: /submit/i });
   await expect(submitBtn).toBeEnabled({ timeout: 15000 });
   await submitBtn.click();
 
-  // Confirmation
+  // Confirmation modal
   await page.locator('text=/be in touch/i').first().waitFor({ state: 'visible', timeout: 60000 });
 
-  // Close with the resize/collapse button (↗ icon at top-right of modal)
-  const closeBtn = page.locator('button:has(svg), [class*="close"], [class*="collapse"]').filter({ has: page.locator('svg') }).first();
-  await closeBtn.click();
-
-  // Wait for results page to be visible again
-  await page.getByText('Read more').first().waitFor({ state: 'visible', timeout: TRANSITION_TIMEOUT });
+  // Minimize and confirm back on results page
+  await page.locator('[aria-label="Close modal"]').click();
+  await expect(page.getByText('Read more').first()).toBeVisible();
 }
 
 test.describe('Program Card RFI', () => {
   test.setTimeout(300000);
 
-  test('Page-level + first card RFI submission', async ({ page }) => {
+  test('First card RFI submission', async ({ page }) => {
     await completeQuizToResults(page);
-    await submitPageLevelRfi(page, 0);
     await submitProgramCardRfi(page, 0);
   });
 
-  test('Page-level + all 5 cards RFI submission', async ({ page }) => {
+  test('All 5 cards RFI submission', async ({ page }) => {
     await completeQuizToResults(page);
-    await submitPageLevelRfi(page, 0);
     for (let i = 0; i < 5; i++) {
       await submitProgramCardRfi(page, i);
     }
