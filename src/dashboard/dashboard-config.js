@@ -22,7 +22,6 @@ const groups = [
     id: 'discovery',
     name: 'Discovery (Sanity Check)',
     description: 'Canary test — fails if quiz options change. ~30s total | ~5s per test',
-    playwrightReportDir: 'playwright-report-discovery',
     tests: [
       { id: 'discovery', name: 'Quiz Discovery', command: 'npx playwright test quiz-discovery --project=chromium' },
     ],
@@ -32,7 +31,6 @@ const groups = [
     id: 'per-screen',
     name: 'Per-Screen Validation',
     description: 'Individual screen validation tests for each quiz step. ~2 min total | ~10s per test',
-    playwrightReportDir: 'playwright-report-per-screen',
     tests: [
       { id: 'screen-homepage', name: 'Homepage', command: 'npx playwright test homepage --project=chromium' },
       { id: 'screen-degree-type', name: 'Degree Type Selection', command: 'npx playwright test quiz-degree-type-selection --project=chromium' },
@@ -48,7 +46,6 @@ const groups = [
     id: 'results-undergrad',
     name: 'Results — Undergraduate',
     description: 'Validates AI-generated Bachelor degree recommendations. ~10 min total | ~60s per test',
-    playwrightReportDir: 'playwright-report-results-undergrad',
     tests: [
       { id: 'results-undergrad-all', name: 'All undergraduate results', command: 'npx playwright test quiz-results-undergraduate --project=chromium' },
     ],
@@ -60,7 +57,6 @@ const groups = [
     id: 'results-grad',
     name: 'Results — Graduate',
     description: 'Validates AI-generated Master degree recommendations. ~10 min total | ~60s per test',
-    playwrightReportDir: 'playwright-report-results-grad',
     tests: [
       { id: 'results-grad-all', name: 'All graduate results', command: 'npx playwright test quiz-results-graduate --project=chromium' },
     ],
@@ -72,7 +68,6 @@ const groups = [
     id: 'results-cert',
     name: 'Results — Certificate',
     description: 'Validates AI-generated certificate recommendations. ~10 min total | ~60s per test',
-    playwrightReportDir: 'playwright-report-results-cert',
     tests: [
       { id: 'results-cert-all', name: 'All certificate results', command: 'npx playwright test quiz-results-certificate --project=chromium' },
     ],
@@ -84,7 +79,6 @@ const groups = [
     id: 'full-flow',
     name: 'Full Flow (Quiz Completion)',
     description: 'Complete quiz journey with real selections at every step — no skips. ~20 min total | ~40s per test',
-    playwrightReportDir: 'playwright-report-full-flow',
     tests: [
       ...fullFlowTests('Undergraduate degree', 'ff-ug'),
       ...fullFlowTests('Graduate degree', 'ff-gr'),
@@ -98,7 +92,6 @@ const groups = [
     id: 'rfi',
     name: 'RFI Submission (E2E)',
     description: 'Full quiz flow + RFI form submission — complete end-to-end user journey. ~2 min total | ~40s per test',
-    playwrightReportDir: 'playwright-report-rfi',
     tests: [
       { id: 'rfi-undergrad', name: 'Undergraduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Undergraduate degree"' },
       { id: 'rfi-grad', name: 'Graduate — RFI', command: 'npx playwright test quiz-full-flow-withRFI --project=chromium -g "Full flow with RFI .+ Graduate degree"' },
@@ -112,7 +105,6 @@ const groups = [
     id: 'program-card-rfi',
     name: 'Program Card RFI (E2E)',
     description: 'Page-level RFI + program-specific RFI from expanded cards. ~4 min total | ~60s per card',
-    playwrightReportDir: 'playwright-report-program-card-rfi',
     tests: [
       { id: 'pcrfi-first', name: 'Page-level + First Card RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "first card"' },
       { id: 'pcrfi-all', name: 'Page-level + All 5 Cards RFI', command: 'npx playwright test quiz-program-card-rfi --project=chromium -g "all 5 cards"' },
@@ -123,7 +115,6 @@ const groups = [
     id: 'negative',
     name: 'Negative Scenarios',
     description: 'Error handling and form validation. ~2 min total | ~15s per validation test',
-    playwrightReportDir: 'playwright-report-negative',
     tests: [
       { id: 'neg-ai-timeout', name: 'AI Timeout — shows retry message', command: 'npx playwright test quiz-negative-scenarios --project=chromium -g "AI timeout"' },
       { id: 'neg-network-fail', name: 'Network Failure — shows error message', command: 'npx playwright test quiz-negative-scenarios --project=chromium -g "Network failure"' },
@@ -144,7 +135,6 @@ const groups = [
     id: 'accessibility',
     name: 'Accessibility',
     description: 'WCAG compliance: keyboard nav, ARIA labels, contrast, focus indicators. ~60s total',
-    playwrightReportDir: 'playwright-report-accessibility',
     tests: [
       { id: 'a11y-focus-trap', name: 'Keyboard Focus Trap in RFI Modal', command: 'npx playwright test quiz-accessibility --project=chromium -g "Focus Trap"' },
       { id: 'a11y-aria-labels', name: 'Screen Reader Labeling (Aria-labels)', command: 'npx playwright test quiz-accessibility --project=chromium -g "Aria-labels"' },
@@ -159,7 +149,6 @@ const groups = [
     id: 'cross-browser',
     name: 'Cross-Browser',
     description: 'Representative paths on Chromium, Firefox, and WebKit. ~4 min total | ~40s per browser',
-    playwrightReportDir: 'playwright-report-cross-browser',
     tests: [
       { id: 'xb-full-flow-chromium', name: 'Full Flow (Chromium)', command: 'npx playwright test quiz-full-flow --project=chromium -g "Full flow .+ Undergraduate degree .+ Technology"' },
       { id: 'xb-full-flow-firefox', name: 'Full Flow (Firefox)', command: 'npx playwright test quiz-full-flow --project=firefox -g "Full flow .+ Undergraduate degree .+ Technology"' },

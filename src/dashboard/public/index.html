@@ -223,7 +223,7 @@ function renderActions(testId, state, group) {
       const reportType = group.id.startsWith('results-') ? group.id : group.id === 'rfi' ? 'rfi' : 'full-flow';
       html += `<a class="report-link" href="/api/reports/stakeholder/${reportType}" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Stakeholder</a>`;
     }
-    html += `<a class="report-link" href="#" onclick="openPlaywrightReport('${group.id}');return false;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Playwright</a>`;
+    html += `<a class="report-link" href="#" onclick="openPlaywrightReport();return false;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Playwright</a>`;
   }
   return html;
 }
@@ -293,8 +293,8 @@ async function stopTest(testId) {
   updateRow(testId);
 }
 
-function openPlaywrightReport(groupId) {
-  fetch(`/api/reports/playwright/${groupId}`).then(() => {
+function openPlaywrightReport() {
+  fetch('/api/reports/playwright').then(() => {
     setTimeout(() => window.open('http://localhost:9323', '_blank'), 1500);
   });
 }
